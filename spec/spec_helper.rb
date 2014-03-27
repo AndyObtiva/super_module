@@ -8,7 +8,7 @@ rescue Bundler::BundlerError => e
   $stderr.puts "Run `bundle install` to install missing gems"
   exit e.status_code
 end
-if RUBY_VERSION >= '1.9'
+if RUBY_VERSION >= '1.9' && !defined?(Rubinius)
   begin
     require 'coveralls'
     Coveralls.wear!
