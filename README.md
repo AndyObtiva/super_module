@@ -4,7 +4,7 @@
 [![Coverage Status](https://coveralls.io/repos/AndyObtiva/super_module/badge.png?branch=master)](https://coveralls.io/r/AndyObtiva/super_module?branch=master)
 [![Code Climate](https://codeclimate.com/github/AndyObtiva/super_module.png)](https://codeclimate.com/github/AndyObtiva/super_module)
 
-SuperModule allows defining class methods and method invocations the super way a super class does without using def included(base).
+SuperModule allows defining class methods and method invocations the same way a super class does without using def included(base).
 
 This succeeds ActiveSupport::Concern by offering lighter syntax
 
