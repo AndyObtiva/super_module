@@ -17,8 +17,8 @@ Jeweler::Tasks.new do |gem|
   gem.name = "super_module"
   gem.homepage = "http://github.com/AndyObtiva/super_module"
   gem.license = "MIT"
-  gem.summary = %Q{SuperModule allows defining class methods and method invocations the super way a super class does without using def included(base). This also succeeds ActiveSupport::Concern by offering lighter syntax}
-  gem.description = %Q{TODO: SuperModule allows defining class methods and method invocations the super way a super class does without using def included(base). This also succeeds ActiveSupport::Concern by offering lighter syntax}
+  gem.summary = %Q{SuperModule allows defining class methods and method invocations the same way a super class does without using def included(base). This also succeeds ActiveSupport::Concern by offering lighter syntax}
+  gem.description = %Q{TODO: SuperModule allows defining class methods and method invocations the same way a super class does without using def included(base). This also succeeds ActiveSupport::Concern by offering lighter syntax}
   gem.email = "andy.am@gmail.com"
   gem.authors = ["Andy Maleh"]
   gem.files.exclude 'spec/*'
