@@ -17,28 +17,27 @@ Jeweler::Tasks.new do |gem|
   gem.name = "super_module"
   gem.homepage = "http://github.com/AndyObtiva/super_module"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = %Q{SuperModule allows defining class methods and method invocations the super way a super class does without using def included(base). This also succeeds ActiveSupport::Concern by offering lighter syntax}
+  gem.description = %Q{TODO: SuperModule allows defining class methods and method invocations the super way a super class does without using def included(base). This also succeeds ActiveSupport::Concern by offering lighter syntax}
   gem.email = "andy.am@gmail.com"
-  gem.authors = ["AndyObtiva"]
+  gem.authors = ["Andy Maleh"]
+  gem.files.exclude 'spec/*'
+  gem.files.exclude 'Gemfile'
+  gem.files.exclude 'Gemfile.lock'
+  gem.files.exclude 'Rakefile'
+  gem.files.exclude '.ruby-gemset'
+  gem.files.exclude '.ruby-version'
+  gem.files.exclude '.travis.yml'
+  gem.files.exclude '.coveralls.yml'
   # dependencies defined in Gemfile
 end
 Jeweler::RubygemsDotOrgTasks.new
 
-require 'rake/testtask'
-Rake::TestTask.new(:test) do |test|
-  test.libs << 'lib' << 'test'
-  test.pattern = 'test/**/test_*.rb'
-  test.verbose = true
-end
+require 'rspec/core/rake_task'
 
-desc "Code coverage detail"
-task :simplecov do
-  ENV['COVERAGE'] = "true"
-  Rake::Task['test'].execute
-end
+RSpec::Core::RakeTask.new(:spec)
 
-task :default => :test
+task :default => :spec
 
 require 'rdoc/task'
 Rake::RDocTask.new do |rdoc|
