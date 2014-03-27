@@ -40,7 +40,7 @@ describe SuperModule do
 
   context "a base class includes a module enhanced as a super module" do
     before do
-      FakeActiveRecord.include(Foo)
+      FakeActiveRecord.send(:include, Foo)
     end
 
     it 'allows invoking class methods in the including base class body' do
@@ -58,8 +58,8 @@ describe SuperModule do
 
   context "a base class includes a base module enhanced as a super module that includes another module enhanced as a super module" do
     before do
-      Bar.include(Foo)
-      FakeActiveRecord.include(Bar)
+      Bar.send(:include, Foo)
+      FakeActiveRecord.send(:include, Bar)
     end
 
     it 'allows invoking class methods in the including base class body' do
