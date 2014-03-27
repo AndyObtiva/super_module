@@ -1,13 +1,15 @@
-# super_module
+# SuperModule
 [![Gem Version](https://badge.fury.io/rb/super_module.png)](http://badge.fury.io/rb/super_module)
 [![Build Status](https://api.travis-ci.org/AndyObtiva/super_module.png?branch=master)](https://travis-ci.org/AndyObtiva/super_module)
 [![Coverage Status](https://coveralls.io/repos/AndyObtiva/super_module/badge.png?branch=master)](https://coveralls.io/r/AndyObtiva/super_module?branch=master)
 [![Code Climate](https://codeclimate.com/github/AndyObtiva/super_module.png)](https://codeclimate.com/github/AndyObtiva/super_module)
 
-Tired of Ruby's modules not allowing you to mix class methods easily into another class?
-Tired of using complex libraries like ActiveSupport::Concern or writing complex code to accomplish that goal?
+Tired of Ruby's modules not allowing you to mix in class methods easily?
+Tired of writing complex code and using complex libraries like ActiveSupport::Concern to accomplish that goal?
 
 Well, worry no more! SuperModule comes to the rescue!
+
+![SuperModule](https://raw.githubusercontent.com/AndyObtiva/super_module/master/SuperModule.jpg)
 
 SuperModule allows defining class methods and method invocations the same way a super class does without using def included(base).
 
