@@ -21,6 +21,7 @@ Gem::Specification.new do |s|
     ".document",
     "LICENSE.txt",
     "README.md",
+    "SuperModule.jpg",
     "VERSION",
     "lib/super_module.rb",
     "spec/lib/super_module_spec.rb",
@@ -31,19 +32,19 @@ Gem::Specification.new do |s|
   s.rubygems_version = "2.2.2"
   s.summary = "SuperModule allows defining class methods and method invocations the same way a super class does without using def included(base). This also succeeds ActiveSupport::Concern by offering lighter syntax"
 
-  #if s.respond_to? :specification_version then
-  #  s.specification_version = 4
-  #
-  #  if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-  #    s.add_development_dependency(%q<jeweler>, ["~> 2.0"])
-  #    s.add_development_dependency(%q<rdoc>, ["~> 3.12"])
-  #  else
-  #    s.add_dependency(%q<jeweler>, ["~> 2.0"])
-  #    s.add_dependency(%q<rdoc>, ["~> 3.12"])
-  #  end
-  #else
-  #  s.add_dependency(%q<jeweler>, ["~> 2.0"])
-  #  s.add_dependency(%q<rdoc>, ["~> 3.12"])
-  #end
+  if s.respond_to? :specification_version then
+    s.specification_version = 4
+
+    if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
+      s.add_development_dependency(%q<jeweler>, ["~> 2.0"])
+      s.add_development_dependency(%q<rdoc>, ["~> 3.12"])
+    else
+      s.add_dependency(%q<jeweler>, ["~> 2.0"])
+      s.add_dependency(%q<rdoc>, ["~> 3.12"])
+    end
+  else
+    s.add_dependency(%q<jeweler>, ["~> 2.0"])
+    s.add_dependency(%q<rdoc>, ["~> 3.12"])
+  end
 end
 
