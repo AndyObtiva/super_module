@@ -10,4 +10,3 @@ rvm:
   - rbx-2.1.1
 gemfile:
   - Gemfile
-bundler_args: --without development
