@@ -1,4 +1,4 @@
-= super_module
+# super_module
 [![Gem Version](https://badge.fury.io/rb/super_module.png)](http://badge.fury.io/rb/super_module)
 [![Build Status](https://api.travis-ci.org/AndyObtiva/super_module.png?branch=master)](https://travis-ci.org/AndyObtiva/super_module)
 [![Coverage Status](https://coveralls.io/repos/AndyObtiva/super_module/badge.png?branch=master)](https://coveralls.io/r/AndyObtiva/super_module?branch=master)
@@ -8,7 +8,7 @@ SuperModule allows defining class methods and method invocations the super way a
 
 This succeeds ActiveSupport::Concern by offering lighter syntax
 
-== Example Usage
+## Example Usage
 
 >     require 'super_module'
 >
@@ -69,7 +69,7 @@ This succeeds ActiveSupport::Concern by offering lighter syntax
 
 => "self.bar"
 
-== Copyright
+## Copyright
 
 Copyright (c) 2014 Andy Maleh. See LICENSE.txt for
 further details.
