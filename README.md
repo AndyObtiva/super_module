@@ -80,7 +80,7 @@ Add <code>require 'super_module'</code> at the top of your Ruby file
  * SuperModule: name of the library and Ruby module that provides functionality via mixin
  * Super module: any Ruby module that mixes in SuperModule
  * Class method definition: Ruby class or module method declared with <code>self.method_name</code> or <code>class << self</code>
- * Class method invocation: Inherited Ruby class or module method invoked in the body of a class or module (e.g. <code>validates :username, presence: true</code>
+ * Class method invocation: Inherited Ruby class or module method invoked in the body of a class or module (e.g. <code>validates :username, presence: true</code>)
  * Code-time: Time of writing code in a Ruby file as opposed to Run-time
  * Run-time: Time of executing Ruby code
 
