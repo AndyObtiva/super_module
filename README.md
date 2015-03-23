@@ -11,7 +11,7 @@ Well, worry no more! SuperModule comes to the rescue!
 
 ![SuperModule](https://raw.githubusercontent.com/AndyObtiva/super_module/master/SuperModule.jpg)
 
-SuperModule allows defining class methods and method invocations the same way a super class does without using def included(base).
+In addition to basic Ruby module functionality, SuperModule allows definition and invocation of class (and module) methods the same way a super class does without the need for using <code>def included(base)</code>.
 
 This succeeds ActiveSupport::Concern by offering lighter syntax and simpler module dependency support.
 
@@ -33,11 +33,12 @@ Run: <pre>gem install super_module</pre>
 
 Add <code>require 'super_module'</code> at the top of your Ruby file
 
-### 2) Include SuperModule at the top of the module
+### 2) Include SuperModule at the top of the module body
 
 >     module UserIdentifiable
 >       include SuperModule
->
+>       include ActiveModel::Model
+>       
 >       belongs_to :user
 >       validates :user_id, presence: true
 >
@@ -74,7 +75,23 @@ Add <code>require 'super_module'</code> at the top of your Ruby file
 >     ClubParticipation.create(club_id: club.id, user_id: user.id).slug
 >     CourseEnrollment.new(course_id: course.id).valid?
 
-## Example
+## Glossary
+
+ * SuperModule: name of the library and Ruby module that provides functionality via mixin
+ * Super module: any Ruby module that mixes in SuperModule
+ * Class method definition: Ruby class or module method declared with <code>self.method_name</code> or <code>class << self</code>
+ * Class method invocation: Inherited Ruby class or module method invoked in the body of a class or module (e.g. <code>validates :username, presence: true</code>
+ * Code-time: Time of writing code in a Ruby file as opposed to Run-time
+ * Run-time: Time of executing Ruby code
+
+## Usage Details
+
+ * SuperModule must always be included at the top of a module's body at code-time
+ * SuperModule inclusion can be optionally followed by other basic or super module inclusions
+ * A super module can only be included in a class or another super module
+ * SuperModule adds <b>zero cost</b> to instantiation of including classes and invocation of included methods (both class and instance)
+
+## Another Example
 
 >     require 'super_module'
 >
@@ -135,10 +152,6 @@ Add <code>require 'super_module'</code> at the top of your Ruby file
 
 => "self.bar"
 
-## Design Limitations
-
-This has been designed to be used only in the code definition of a module.
-
 ## How Does It Work?
 
 Although the library code is written in a very simple and modular fashion, making it easy to read through the algorithm, here is a basic rundown of how the implementation works.
@@ -198,8 +211,14 @@ The second step ensures that <code>merge_duplicates</code> is included in Contac
 
 You are welcome to read through the code for more in-depth details.
 
+## Limitations and Caveats
+
+ * SuperModule has been designed to be used only in the code definition of a module, not to be mixed in at run-time.
+ * A class or module mixing in SuperModule will suffer a marginal performance hit on first load into the Ruby environment. Afterward, class usage (instantiation and method invocation) will incurr no extra performance hits, running as fast as any other class. 
+
 ## Copyright
 
 Copyright (c) 2014 Andy Maleh. See LICENSE.txt for
 further details.
+
 
