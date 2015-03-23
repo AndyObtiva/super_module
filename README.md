@@ -20,7 +20,7 @@ This succeeds ActiveSupport::Concern by offering lighter syntax and simpler modu
 To introduce SuperModule, here is a comparison of three different approaches for writing a
 UserIdentifiable module. 
 
-### 1) self.included(base)
+#### 1) self.included(base)
 
 >     module UserIdentifiable
 >       include ActiveModel::Model
@@ -46,7 +46,7 @@ UserIdentifiable module.
 
 This is a lot to think about and process for simply wanting inclusion of class method definitions (like <code>most_active_user</code>) and class method invocations (like <code>belongs_to</code> and <code>validates</code>). Therefore, this approach suffers from unnecessary complexity that hinders problem-solving flow; prevents developers from being DRY with boiler-plate code; and breaks expectations as per common object-oriented language conventions, discouraging companies from potentially including Ruby in a polyglot stack, such as Groupon's Ruby/Java/Node.js stack and SoundCloud's JRuby/Scala/Clojure stack.
 
-### 2) ActiveSupport::Concern
+#### 2) ActiveSupport::Concern
 
 >     module UserIdentifiable
 >       extend ActiveSupport::Concern
@@ -70,7 +70,7 @@ This is a lot to think about and process for simply wanting inclusion of class m
 
 A step forward that addresses the boiler-plate DRY concern, but is otherwise really just a lipstick on a pig.
 
-### 3) SuperModule
+#### 3) SuperModule
 
 >     module UserIdentifiable
 >       include SuperModule
@@ -92,28 +92,30 @@ SuperModule provides a simple conventional object-oriented approach that works s
 
 ## Instructions
 
-### 1) Install and require gem
+#### 1) Install and require gem
 
-<b>Using Bundler</b>
+<b>Using [Bundler](http://bundler.io/)</b>
 
 Add the following to Gemfile: <pre>gem 'super_module', '1.0.0'</pre>
-Run: <code>bundle</code>
 
-It will automatically get required in the application when loading with bundler (e.g. in a Rails application)
+And run the following command: <pre>bundle</pre>
 
-<b>Using RubyGem Directly</b>
+Afterwards, SuperModule will automatically get required in the application (e.g. a Rails application) and be ready for use.
 
-Run: <pre>gem install super_module</pre>
-(add <code>--no-ri --no-rdoc</code> if you wish to skip downloading them for a faster install)
+<b>Using [RubyGem](https://rubygems.org/gems/super_module) Directly</b>
 
-Add <code>require 'super_module'</code> at the top of your Ruby file
+Run the following command: <pre>gem install super_module</pre>
 
-### 2) Include SuperModule at the top of the module body
+(add <code>--no-ri --no-rdoc</code> if you wish to skip downloading documentation for a faster install)
+
+Add the following at the top of your Ruby file: <pre>require 'super_module'</pre>
+
+#### 2) Include SuperModule at the top of the module
 
 >     module UserIdentifiable
 >       include SuperModule
 >       include ActiveModel::Model
->       
+>
 >       belongs_to :user
 >       validates :user_id, presence: true
 >
@@ -126,7 +128,7 @@ Add <code>require 'super_module'</code> at the top of your Ruby file
 >       end
 >     end
 
-### 3) Mix newly defined module into a class or another super module
+#### 3) Mix newly defined module into a class or another super module
 
 >     class ClubParticipation < ActiveRecord::Base
 >       include UserIdentifiable
@@ -142,7 +144,7 @@ Add <code>require 'super_module'</code> at the top of your Ruby file
 >       include Accountable
 >     end
 
-### 4) Start using by invoking class methods or instance methods
+#### 4) Start using by invoking class methods or instance methods
 
 >     CourseEnrollment.most_active_user
 >     ClubParticipation.most_active_user
