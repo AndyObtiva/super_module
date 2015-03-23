@@ -15,6 +15,81 @@ In addition to basic Ruby module functionality, SuperModule allows definition an
 
 This succeeds ActiveSupport::Concern by offering lighter syntax and simpler module dependency support.
 
+## Introductory Comparison
+
+To introduce SuperModule, here is a comparison of three different approaches for writing a
+UserIdentifiable module. 
+
+### 1) self.included(base)
+
+>     module UserIdentifiable
+>       include ActiveModel::Model
+>
+>       def self.included(base_klass)
+>         base_klass.extend(ClassMethods)
+>         base.class_eval do
+>           belongs_to :user
+>           validates :user_id, presence: true
+>         end
+>       end
+>       
+>       module ClassMethods
+>         def most_active_user
+>           User.find_by_id(select('count(id) as head_count, user_id').group('user_id').order('count(id) desc').first.user_id)
+>         end
+>       end
+>       
+>       def slug
+>         "#{self.class.name}_#{user_id}"
+>       end
+>     end
+
+This is a lot to think about and process for simply wanting inclusion of class method definitions (like <code>most_active_user</code>) and class method invocations (like <code>belongs_to</code> and <code>validates</code>). Therefore, this approach suffers from unnecessary complexity that hinders problem-solving flow; prevents developers from being DRY with boiler-plate code; and breaks expectations as per common object-oriented language conventions, discouraging companies from potentially including Ruby in a polyglot stack, such as Groupon's Ruby/Java/Node.js stack and SoundCloud's JRuby/Scala/Clojure stack.
+
+### 2) ActiveSupport::Concern
+
+>     module UserIdentifiable
+>       extend ActiveSupport::Concern
+>       include ActiveModel::Model
+>
+>       included do
+>         belongs_to :user
+>         validates :user_id, presence: true
+>       end
+>       
+>       module ClassMethods
+>         def most_active_user
+>           User.find_by_id(select('count(id) as head_count, user_id').group('user_id').order('count(id) desc').first.user_id)
+>         end
+>       end
+>       
+>       def slug
+>         "#{self.class.name}_#{user_id}"
+>       end
+>     end
+
+A step forward that addresses the boiler-plate DRY concern, but is otherwise really just a lipstick on a pig.
+
+### 3) SuperModule
+
+>     module UserIdentifiable
+>       include SuperModule
+>       include ActiveModel::Model
+>       
+>       belongs_to :user
+>       validates :user_id, presence: true
+>
+>       def self.most_active_user
+>         User.find_by_id(select('count(id) as head_count, user_id').group('user_id').order('count(id) desc').first.user_id)
+>       end
+>
+>       def slug
+>         "#{self.class.name}_#{user_id}"
+>       end
+>     end
+
+SuperModule provides a simple conventional object-oriented approach that works similarly Ruby's superclass inheritance approach, collapsing the difference in class method definition/invocation between super-classes and super modules. This also helps Ruby be more beginner-friendly and polyglot-stack-friendly as an added bonus.
+
 ## Instructions
 
 ### 1) Install and require gem
