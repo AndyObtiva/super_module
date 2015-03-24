@@ -161,6 +161,8 @@ describe SuperModule do
 
     subject { BazActiveRecord }
 
+    after { allow(Time).to receive(:now).and_call_original }
+
     it 'allows invoking class methods' do
       expect(subject.validations).to include(['foo', {:presence => true}])
       expect(subject.validations).to include(['bar', {:presence => true}])
@@ -182,7 +184,10 @@ describe SuperModule do
     end
 
     it 'can include a basic module (Comprable)' do 
+      now = Time.now
+      allow(Time).to receive(:now).and_return(now)
       instance = subject.new
+      allow(Time).to receive(:now).and_return(now + 100)
       instance2 = subject.new
 
       expect(instance < instance2).to eq(true)
