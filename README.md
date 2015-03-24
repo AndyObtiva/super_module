@@ -185,6 +185,8 @@ CourseEnrollment.new(course_id: course.id).valid?
 
 ## Another Example
 
+Copy and paste the following code snippets in <code>irb</code> and you should get the output denoted by double arrows (<code>=></code>).
+
 ```ruby
 require 'super_module'
 
@@ -230,19 +232,27 @@ MediaAuthorization.create.errors.messages.inspect
 
 => "{:credit_card_id=>[\"can't be blank\"], :user_id=>[\"can't be blank\"]}"
 
+```ruby
 MediaAuthorization.new.foo
+```
 
 => "foo"
 
+```ruby
 MediaAuthorization.new.bar
+```
 
 => "bar"
 
+```ruby
 MediaAuthorization.foo
+```
 
 => "self.foo"
 
+```ruby
 MediaAuthorization.bar
+```
 
 => "self.bar"
 
