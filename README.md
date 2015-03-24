@@ -44,7 +44,7 @@ UserIdentifiable module.
 >       end
 >     end
 
-This is a lot to think about and process for simply wanting inclusion of class method definitions (like <code>most_active_user</code>) and class method invocations (like <code>belongs_to</code> and <code>validates</code>). Therefore, this approach suffers from unnecessary complexity that hinders problem-solving flow; prevents developers from being DRY with boiler-plate code; and breaks expectations as per common object-oriented language conventions, discouraging companies from potentially including Ruby in a polyglot stack, such as Groupon's Ruby/Java/Node.js stack and SoundCloud's JRuby/Scala/Clojure stack.
+This is a lot to think about and process for simply wanting inclusion of class method definitions (like <code>most_active_user</code>) and class method invocations (like <code>belongs_to</code> and <code>validates</code>). The unnecessary complexity gets in the way of problem-solving; slows down productivity with repetitive boiler-plate code; and breaks expectations set in other similar object-oriented languages, discouraging companies from including Ruby in a polyglot stack, such as Groupon's Ruby/Java/Node.js stack and SoundCloud's JRuby/Scala/Clojure stack.
 
 #### 2) ActiveSupport::Concern
 
@@ -68,7 +68,7 @@ This is a lot to think about and process for simply wanting inclusion of class m
 >       end
 >     end
 
-A step forward that addresses the boiler-plate DRY concern, but is otherwise really just a lipstick on a pig.
+A step forward that addresses the boiler-plate DRY concern, but is otherwise really just lipstick on a pig.
 
 #### 3) SuperModule
 
@@ -88,7 +88,7 @@ A step forward that addresses the boiler-plate DRY concern, but is otherwise rea
 >       end
 >     end
 
-SuperModule provides a simple conventional object-oriented approach that works similarly Ruby's superclass inheritance approach, collapsing the difference in class method definition/invocation between super-classes and super modules. This also helps Ruby be more beginner-friendly and polyglot-stack-friendly as an added bonus.
+SuperModule provides a simple conventional object-oriented approach that works just as expected. Given that it collapses difference between having a base class extend a super class or include a super module, it encourages as a side benefit writing better Object-Oriented code and helps Ruby be more polyglot and beginner friendly.
 
 ## Instructions
 
