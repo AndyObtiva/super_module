@@ -22,71 +22,71 @@ UserIdentifiable module.
 
 #### 1) self.included(base)
 
->     module UserIdentifiable
->       include ActiveModel::Model
->
->       def self.included(base_klass)
->         base_klass.extend(ClassMethods)
->         base.class_eval do
->           belongs_to :user
->           validates :user_id, presence: true
->         end
->       end
->       
->       module ClassMethods
->         def most_active_user
->           User.find_by_id(select('count(id) as head_count, user_id').group('user_id').order('count(id) desc').first.user_id)
->         end
->       end
->       
->       def slug
->         "#{self.class.name}_#{user_id}"
->       end
->     end
+module UserIdentifiable
+  include ActiveModel::Model
+
+  def self.included(base_klass)
+    base_klass.extend(ClassMethods)
+    base.class_eval do
+      belongs_to :user
+      validates :user_id, presence: true
+    end
+  end
+  
+  module ClassMethods
+    def most_active_user
+      User.find_by_id(select('count(id) as head_count, user_id').group('user_id').order('count(id) desc').first.user_id)
+    end
+  end
+  
+  def slug
+    "#{self.class.name}_#{user_id}"
+  end
+end
 
 This is a lot to think about and process for simply wanting inclusion of class method definitions (like <code>most_active_user</code>) and class method invocations (like <code>belongs_to</code> and <code>validates</code>). The unnecessary complexity gets in the way of problem-solving; slows down productivity with repetitive boiler-plate code; and breaks expectations set in other similar object-oriented languages, discouraging companies from including Ruby in a polyglot stack, such as Groupon's Ruby/Java/Node.js stack and SoundCloud's JRuby/Scala/Clojure stack.
 
 #### 2) ActiveSupport::Concern
 
->     module UserIdentifiable
->       extend ActiveSupport::Concern
->       include ActiveModel::Model
->
->       included do
->         belongs_to :user
->         validates :user_id, presence: true
->       end
->       
->       module ClassMethods
->         def most_active_user
->           User.find_by_id(select('count(id) as head_count, user_id').group('user_id').order('count(id) desc').first.user_id)
->         end
->       end
->       
->       def slug
->         "#{self.class.name}_#{user_id}"
->       end
->     end
+module UserIdentifiable
+  extend ActiveSupport::Concern
+  include ActiveModel::Model
+
+  included do
+    belongs_to :user
+    validates :user_id, presence: true
+  end
+  
+  module ClassMethods
+    def most_active_user
+      User.find_by_id(select('count(id) as head_count, user_id').group('user_id').order('count(id) desc').first.user_id)
+    end
+  end
+  
+  def slug
+    "#{self.class.name}_#{user_id}"
+  end
+end
 
 A step forward that addresses the boiler-plate DRY concern, but is otherwise really just lipstick on a pig.
 
 #### 3) SuperModule
 
->     module UserIdentifiable
->       include SuperModule
->       include ActiveModel::Model
->       
->       belongs_to :user
->       validates :user_id, presence: true
->
->       def self.most_active_user
->         User.find_by_id(select('count(id) as head_count, user_id').group('user_id').order('count(id) desc').first.user_id)
->       end
->
->       def slug
->         "#{self.class.name}_#{user_id}"
->       end
->     end
+module UserIdentifiable
+  include SuperModule
+  include ActiveModel::Model
+  
+  belongs_to :user
+  validates :user_id, presence: true
+
+  def self.most_active_user
+    User.find_by_id(select('count(id) as head_count, user_id').group('user_id').order('count(id) desc').first.user_id)
+  end
+
+  def slug
+    "#{self.class.name}_#{user_id}"
+  end
+end
 
 SuperModule provides a simple conventional object-oriented approach that works just as expected. Given that it collapses difference between having a base class extend a super class or include a super module, it encourages as a side benefit writing better Object-Oriented code and helps Ruby be more polyglot and beginner friendly.
 
@@ -112,45 +112,45 @@ Add the following at the top of your Ruby file: <pre>require 'super_module'</pre
 
 #### 2) Include SuperModule at the top of the module
 
->     module UserIdentifiable
->       include SuperModule
->       include ActiveModel::Model
->
->       belongs_to :user
->       validates :user_id, presence: true
->
->       def self.most_active_user
->         User.find_by_id(select('count(id) as head_count, user_id').group('user_id').order('count(id) desc').first.user_id)
->       end
->
->       def slug
->         "#{self.class.name}_#{user_id}"
->       end
->     end
+module UserIdentifiable
+  include SuperModule
+  include ActiveModel::Model
+
+  belongs_to :user
+  validates :user_id, presence: true
+
+  def self.most_active_user
+    User.find_by_id(select('count(id) as head_count, user_id').group('user_id').order('count(id) desc').first.user_id)
+  end
+
+  def slug
+    "#{self.class.name}_#{user_id}"
+  end
+end
 
 #### 3) Mix newly defined module into a class or another super module
 
->     class ClubParticipation < ActiveRecord::Base
->       include UserIdentifiable
->     end
->     class CourseEnrollment < ActiveRecord::Base
->       include UserIdentifiable
->     end
->     module Accountable
->       include SuperModule
->       include UserIdentifiable
->     end
->     class Activity < ActiveRecord::Base
->       include Accountable
->     end
+class ClubParticipation < ActiveRecord::Base
+  include UserIdentifiable
+end
+class CourseEnrollment < ActiveRecord::Base
+  include UserIdentifiable
+end
+module Accountable
+  include SuperModule
+  include UserIdentifiable
+end
+class Activity < ActiveRecord::Base
+  include Accountable
+end
 
 #### 4) Start using by invoking class methods or instance methods
 
->     CourseEnrollment.most_active_user
->     ClubParticipation.most_active_user
->     Activity.last.slug
->     ClubParticipation.create(club_id: club.id, user_id: user.id).slug
->     CourseEnrollment.new(course_id: course.id).valid?
+CourseEnrollment.most_active_user
+ClubParticipation.most_active_user
+Activity.last.slug
+ClubParticipation.create(club_id: club.id, user_id: user.id).slug
+CourseEnrollment.new(course_id: course.id).valid?
 
 ## Glossary
 
@@ -170,62 +170,62 @@ Add the following at the top of your Ruby file: <pre>require 'super_module'</pre
 
 ## Another Example
 
->     require 'super_module'
->
->     module Foo
->       include SuperModule
->
->       validates :credit_card_id, presence: true
->
->       def foo
->         puts 'foo'
->         'foo'
->       end
->
->       def self.foo
->         puts 'self.foo'
->         'self.foo'
->       end
->     end
->
->     module Bar
->       include SuperModule
->       include Foo
->
->       validates :user_id, presence: true
->
->       def bar
->         puts 'bar'
->         'bar'
->       end
->
->       def self.bar
->         puts 'self.bar'
->         'self.bar'
->       end
->     end
->
->     class MediaAuthorization < ActiveRecord::Base
->       include Bar
->     end
->
->     MediaAuthorization.create.errors.messages.inspect
+require 'super_module'
+
+module Foo
+  include SuperModule
+
+  validates :credit_card_id, presence: true
+
+  def foo
+    puts 'foo'
+    'foo'
+  end
+
+  def self.foo
+    puts 'self.foo'
+    'self.foo'
+  end
+end
+
+module Bar
+  include SuperModule
+  include Foo
+
+  validates :user_id, presence: true
+
+  def bar
+    puts 'bar'
+    'bar'
+  end
+
+  def self.bar
+    puts 'self.bar'
+    'self.bar'
+  end
+end
+
+class MediaAuthorization < ActiveRecord::Base
+  include Bar
+end
+
+MediaAuthorization.create.errors.messages.inspect
 
 => "{:credit_card_id=>[\"can't be blank\"], :user_id=>[\"can't be blank\"]}"
 
->     MediaAuthorization.new.foo
+MediaAuthorization.new.foo
 
 => "foo"
 
->     MediaAuthorization.new.bar
+MediaAuthorization.new.bar
 
 => "bar"
 
->     MediaAuthorization.foo
+MediaAuthorization.foo
 
 => "self.foo"
 
->     MediaAuthorization.bar
+MediaAuthorization.bar
 
 => "self.bar"
 
@@ -233,31 +233,31 @@ Add the following at the top of your Ruby file: <pre>require 'super_module'</pre
 
 Although the library code is written in a very simple and modular fashion, making it easy to read through the algorithm, here is a basic rundown of how the implementation works.
 
->     def included(base)
->       __invoke_super_module_class_method_calls(base)
->       __define_super_module_class_methods(base)
->     end
+def included(base)
+  __invoke_super_module_class_method_calls(base)
+  __define_super_module_class_methods(base)
+end
 
 ##### 1) The first step ensures invoking super module class method calls from the base object that includes it.
 
 For example, suppose we have a super module called Locatable:
 
->     module Locatable
->       include SuperModule
->       
->       validates :x_coordinate, numericality: true
->       validates :y_coordinate, numericality: true
->       
->       def move(x, y)
->         self.x_coordinate += x
->         self.y_coordinate += y
->       end
->     end
->     
->     class Vehicle < ActiveRecord::Base
->       include Locatable
->     # … more code follows
->     end
+module Locatable
+  include SuperModule
+  
+  validates :x_coordinate, numericality: true
+  validates :y_coordinate, numericality: true
+  
+  def move(x, y)
+    self.x_coordinate += x
+    self.y_coordinate += y
+  end
+end
+
+class Vehicle < ActiveRecord::Base
+  include Locatable
+# … more code follows
+end
 
 This first step guarantees invocation of the two Locatable <code>validates</code> method calls on the Vehicle object class.
 
@@ -265,24 +265,24 @@ This first step guarantees invocation of the two Locatable <code>validates</code
 
 For example, suppose we have a super module called Addressable:
 
->     module Addressable
->       include SuperModule
->       
->       include Locatable
->       validates :city, presence: true, length: { maximum: 255 }
->       validates :state, presence: true, length: { is: 2 }
->     
->       def self.merge_duplicates
->         # 1. Look through all Addressable instances in the database
->         # 2. Identify duplicates
->         # 3. Merge duplicate addressables
->       end
->     end
->     
->     class Contact < ActiveRecord::Base
->       include Addressable
->     # … more code follows
->     end
+module Addressable
+  include SuperModule
+  
+  include Locatable
+  validates :city, presence: true, length: { maximum: 255 }
+  validates :state, presence: true, length: { is: 2 }
+
+  def self.merge_duplicates
+    # 1. Look through all Addressable instances in the database
+    # 2. Identify duplicates
+    # 3. Merge duplicate addressables
+  end
+end
+
+class Contact < ActiveRecord::Base
+  include Addressable
+# … more code follows
+end
 
 The second step ensures that <code>merge_duplicates</code> is included in Contact as a class method, allowing the call <code>Contact.merge_duplicates</code>
 
@@ -297,5 +297,3 @@ You are welcome to read through the code for more in-depth details.
 
 Copyright (c) 2014 Andy Maleh. See LICENSE.txt for
 further details.
-
-
