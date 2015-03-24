@@ -50,4 +50,4 @@ pkg
 
 .idea
 .idea/*
-Gemfile.lock
+*Gemfile.lock

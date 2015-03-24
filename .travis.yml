@@ -4,11 +4,34 @@ rvm:
   - 2.1.5
   - 2.0.0
   - 1.9.3
-#  - 1.8.7
-#  - ree-1.8.7
-#  - jruby-18mode
+  - 1.8.7
+  - ree
+  - jruby-18mode
   - jruby-19mode
-#  - rbx-1.4.1
+  - rbx-1.4.1
   - rbx-2.5.2
 gemfile:
   - Gemfile
+  - ruby187.Gemfile
+matrix:
+  exclude:
+    - rvm: 2.2.1
+      gemfile: ruby187.Gemfile
+    - rvm: 2.1.5
+      gemfile: ruby187.Gemfile
+    - rvm: 2.0.0
+      gemfile: ruby187.Gemfile
+    - rvm: 1.9.3
+      gemfile: ruby187.Gemfile
+    - rvm: 1.8.7
+      gemfile: Gemfile
+    - rvm: ree
+      gemfile: Gemfile
+    - rvm: jruby-18mode
+      gemfile: Gemfile
+    - rvm: jruby-19mode
+      gemfile: ruby187.Gemfile
+    - rvm: rbx-1.4.1
+      gemfile: Gemfile
+    - rvm: rbx-2.5.2
+      gemfile: ruby187.Gemfile

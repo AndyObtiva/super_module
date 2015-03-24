@@ -20,7 +20,7 @@ describe SuperModule do
 
     include SuperModule
     include FakeActiveModel
-    validates 'foo', presence: true
+    validates 'foo', {:presence => true}
 
     def self.foo
       'self.foo'
@@ -36,7 +36,7 @@ describe SuperModule do
 
     include SuperModule
     include Foo
-    validates 'bar', presence: true
+    validates 'bar', {:presence => true}
 
     class << self
       include Comparable
@@ -75,7 +75,7 @@ describe SuperModule do
     include Comparable
     include Bar
     make_barrable
-    validates 'baz', presence: true
+    validates 'baz', {:presence => true}
     attr_reader :created_at
     
     def initialize
@@ -119,7 +119,7 @@ describe SuperModule do
     subject { FooActiveRecord }
 
     it 'allows invoking class methods' do
-      expect(subject.validations).to include(['foo', {presence: true}])
+      expect(subject.validations).to include(['foo', {:presence => true}])
     end
 
     it 'includes class methods declared via "self.method_name"' do
@@ -139,8 +139,8 @@ describe SuperModule do
     subject { BarActiveRecord }
 
     it 'allows invoking class methods' do
-      expect(subject.validations).to include(['foo', {presence: true}])
-      expect(subject.validations).to include(['bar', {presence: true}])
+      expect(subject.validations).to include(['foo', {:presence => true}])
+      expect(subject.validations).to include(['bar', {:presence => true}])
     end
 
     it 'includes class methods declared via "class << self"' do
@@ -162,9 +162,9 @@ describe SuperModule do
     subject { BazActiveRecord }
 
     it 'allows invoking class methods' do
-      expect(subject.validations).to include(['foo', {presence: true}])
-      expect(subject.validations).to include(['bar', {presence: true}])
-      expect(subject.validations).to include(['baz', {presence: true}])
+      expect(subject.validations).to include(['foo', {:presence => true}])
+      expect(subject.validations).to include(['bar', {:presence => true}])
+      expect(subject.validations).to include(['baz', {:presence => true}])
     end
 
     it 'includes class methods declared via "class << self"' do
