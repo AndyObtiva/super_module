@@ -1,102 +1,14 @@
 require 'spec_helper'
 
+puts " >>>>>>>PRETESTS<<<<<<< "
+puts Foo.include?(SuperModule)
+puts FakeActiveModel.include?(SuperModule)
+puts Foo.foo
+puts Foo.meh.inspect
+puts Foo.validations.inspect
+puts " ****** TESTS BEGIN ****** "
+
 describe SuperModule do
-
-  module FakeActiveModel
-
-    include SuperModule
-
-    def self.validates(attribute, options)
-      validations << [attribute, options]
-    end
-
-    def self.validations
-      @validations ||= []
-    end
-
-  end
-
-  module Foo
-
-    include SuperModule
-    include FakeActiveModel
-    validates 'foo', {:presence => true}
-
-    def self.foo
-      'self.foo'
-    end
-
-    def foo
-      'foo'
-    end
-
-  end
-
-  module Bar
-
-    include SuperModule
-    include Foo
-    validates 'bar', {:presence => true}
-
-    class << self
-      include Comparable
-
-      def bar
-        'self.bar'
-      end
-
-      def barrable
-        @barrable
-      end
-
-      def barrable=(value)
-        @barrable = value
-      end
-
-      def make_barrable
-        self.barrable = true
-      end
-
-      def <=>(other_bar_class)
-        self.name <=> other_bar_class.name
-      end
-
-    end
-
-    def bar
-      'bar'
-    end
-
-  end
-
-  module Baz
-
-    include SuperModule
-    include Comparable
-    include Bar
-    make_barrable
-    validates 'baz', {:presence => true}
-    attr_reader :created_at
-    
-    def initialize
-      @created_at = Time.now.to_f
-    end
-    
-    class << self
-      def baz
-        'self.baz'
-      end
-    end
-    
-    def baz
-      'baz'
-    end
-    
-    def <=>(other_baz)
-      created_at <=> other_baz.created_at
-    end
-
-  end
 
   class FakeActiveRecord
     include FakeActiveModel
@@ -132,6 +44,9 @@ describe SuperModule do
       expect(instance.foo).to eq('foo')
     end
 
+    it 'provides class method self as the including base class as in the class method (meh)' do
+      expect(subject.meh).to eq(subject)
+    end
   end
 
   context "included by a module (Foo) that is included by a second module (Bar) that is included by a class (BarActiveRecord)" do
@@ -155,13 +70,29 @@ describe SuperModule do
       expect(instance.bar).to eq('bar')
     end
 
+    it 'can include a basic module (Forwardable) into singleton class by placing in class << self' do 
+      instance = subject.new
+      expect(instance.length).to eq(3)
+    end
+
+    it 'can include a basic module (Comparable)' do 
+      now = Time.now
+      allow(Time).to receive(:now).and_return(now)
+      instance = subject.new
+      allow(Time).to receive(:now).and_return(now + 100)
+      instance2 = subject.new
+
+      expect(instance2 > instance).to eq(true)
+    end
+
+    it 'provides class method self as the including base class as in the class method (meh)' do
+      expect(subject.meh).to eq(subject)
+    end
   end
 
   context "included by a module (Foo), included by another module (Bar), included by a third module (Baz) that is included by a class (BazActiveRecord)" do
 
     subject { BazActiveRecord }
-
-    after { allow(Time).to receive(:now).and_call_original }
 
     it 'allows invoking class methods' do
       expect(subject.validations).to include(['foo', {:presence => true}])
@@ -176,28 +107,27 @@ describe SuperModule do
     end
 
     it 'includes instance methods' do
-      instance = subject.new
+      instance = BazActiveRecord.new(100)
 
       expect(instance.foo).to eq('foo')
       expect(instance.bar).to eq('bar')
       expect(instance.baz).to eq('baz')
     end
 
-    it 'can include a basic module (Comprable)' do 
-      now = Time.now
-      allow(Time).to receive(:now).and_return(now)
-      instance = subject.new
-      allow(Time).to receive(:now).and_return(now + 100)
-      instance2 = subject.new
+    it 'can override super module behavior (<=>)' do 
+      instance = subject.new(50)
+      instance2 = subject.new(7)
 
-      expect(instance < instance2).to eq(true)
+      expect(instance2 > instance).to eq(false)
     end
 
-    it 'can include a basic module (Comprable) into singleton class via "class << self"' do 
-      expect(Bar < BarActiveRecord).to eq(true)
+    it 'provides class method self as the including base class as in the class method (meh)' do
+      expect(subject.meh).to eq(subject)
     end
-
-
   end
 
+# TODO test different cases for copying method from a file
+# like \r\n vs \n
+# and one line definition vs 2 lines vs multi line
+# also test special cases using eval, def_method, and self. vs wrapped with class << self
 end
