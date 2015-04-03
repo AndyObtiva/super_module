@@ -1,5 +1,7 @@
 source "http://rubygems.org"
 
+gem "ruby_parser", "~> 3.6.5"
+
 group :development do
   gem "jeweler", "~> 2.0.1"
   gem "rdoc", "~> 4.2.0"
