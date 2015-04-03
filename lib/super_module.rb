@@ -6,8 +6,10 @@
 
 # This module allows defining class methods and method invocations the same way a super class does without using def included(base).
 
+if RUBY_VERSION == '1.8.7'
+  require 'ruby18_source_location'
+end
 require 'ruby_parser'
-
 $indent = ''
 alias puts2 puts
 def puts(text)
@@ -61,7 +63,7 @@ module SuperModule
             super_module_having_method_added = __super_module_having_method(method_name)
             if super_module_having_method_added.nil?
               method = self.method(method_name)
-              method_file = method.source_location.first
+              method_file = method.source_location[0]
               puts "method_file: #{method_file}"
               method_file_content = File.open(method_file, 'r') {|f| f.read}
               #puts "method_file_content: #{method_file_content}"
