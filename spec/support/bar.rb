@@ -6,6 +6,7 @@ module Bar
   validates 'bar', {:presence => true}
   attr_reader :created_at
 
+  # Defines singleton methods via class << self to provide as a test case for SuperModule
   class << self
     include Forwardable
 
@@ -22,10 +23,12 @@ module Bar
     end
 
     def make_barrable
+      puts "make_barrable: Making #{self.inspect} barrable"
       self.barrable = true
     end
   end
 
+  make_barrable
   def_delegators :@bar, :length
 
   def initialize

@@ -1,13 +1,5 @@
 require 'spec_helper'
 
-puts " >>>>>>>PRETESTS<<<<<<< "
-puts Foo.include?(SuperModule)
-puts FakeActiveModel.include?(SuperModule)
-puts Foo.foo
-puts Foo.meh.inspect
-puts Foo.validations.inspect
-puts " ****** TESTS BEGIN ****** "
-
 describe SuperModule do
 
   class FakeActiveRecord
@@ -75,6 +67,10 @@ describe SuperModule do
       expect(instance.length).to eq(3)
     end
 
+    it 'applies super module (Bar) class method invocation (make_barrable) on including class (BarActiveRecord), whereby the method that is defined in the same super module that declares it (Bar)' do
+      expect(subject.barrable).to eq(true)
+    end
+
     it 'can include a basic module (Comparable)' do 
       now = Time.now
       allow(Time).to receive(:now).and_return(now)
@@ -114,6 +110,10 @@ describe SuperModule do
       expect(instance.baz).to eq('baz')
     end
 
+    it 'invokes singleton method (make_barrable) from super module' do
+      expect(subject.barrable).to eq(true)
+    end
+
     it 'can override super module behavior (<=>)' do 
       instance = subject.new(50)
       instance2 = subject.new(7)
@@ -126,8 +126,5 @@ describe SuperModule do
     end
   end
 
-# TODO test different cases for copying method from a file
-# like \r\n vs \n
-# and one line definition vs 2 lines vs multi line
-# also test special cases using eval, def_method, and self. vs wrapped with class << self
+# TODO test special cases using inline eval, define_method
 end
