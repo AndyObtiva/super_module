@@ -1,6 +1,5 @@
 source "http://rubygems.org"
 
-gem "ruby_parser", "~> 3.6.5"
 gem "method_source", "~> 0.8.2"
 
 group :development do
