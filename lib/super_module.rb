@@ -7,17 +7,27 @@
 # This module allows defining class methods and method invocations the same way a super class does without using def included(base).
 
 require 'method_source'
-$indent = ''
-alias puts2 puts
-def puts(text)
-  print($indent)
-  puts2(text)
-end
+require 'logger'
 #TODO refactor names to be much more friendly
-#TODO utilize official logging from Ruby and turn all puts into debug statements
+#TODO sanitize logging debug messages to make more consumer developer friendly
 module SuperModule
+  def self.logger
+    @logger ||= Logger.new(STDOUT)
+  end
+  def self.logger=(logger_instance)
+    @logger = logger_instance
+  end
+  def self.log(message, indent_option = nil)
+    log_indent << '  ' if indent_option == :indent
+    log_indent[0, log_indent.length - 2] = '' if indent_option == :outdent
+    message = "#{log_indent}#{message}"
+    logger.log(Logger::DEBUG, message, 'SuperModule')
+  end
+  def self.log_indent
+    @indent ||= ''
+  end
   def self.included(original_base)
-    puts "#{original_base} includes SuperModule"
+    SuperModule.log "#{original_base} includes SuperModule"
     original_base.class_eval do
       class << self
 
@@ -59,9 +69,9 @@ module SuperModule
         end
 
         def singleton_method_added(method_name)
-          puts "#{self.inspect} requests recording def method: #{method_name}"
+          SuperModule.log "#{self.inspect} requests recording def method: #{method_name}"
           unless __excluded_singleton_methods.include?(method_name)
-            puts "#{self} records def method: #{method_name} has been accepted"
+            SuperModule.log "#{self} records def method: #{method_name} has been accepted"
             #the following line is responsible for methods having the module as self instead of the class
             method_body = nil
             super_module_having_method_added = __super_module_having_method(method_name)
@@ -69,30 +79,31 @@ module SuperModule
             if super_module_having_method_added.nil?
               method = self.method(method_name)
               method_body = method.source
-              puts "Method source for #{self.inspect}.#{method_name}: \n#{method_body}"
-              method_arg_match = method_body.match(/def (self\.)?#{method_name}(\(([^)]+)\))?/m)
-              #puts "method_arg_match.inspect #{method_arg_match.inspect}"
-              method_args = ("#{method_arg_match[3]}" if method_arg_match[3])
+              SuperModule.log "Method source for #{self.inspect}.#{method_name}: \n#{method_body}"
+              method_definition_regex = /(send)?[ \t(:"']*def(ine_method)?[ \t,:"']+(self\.)?#{method_name}\)?[ \tdo{(|]*([^\n)|;]*)?[ \t)|;]*/m
+              method_arg_match = method_body.match(method_definition_regex)
+              SuperModule.log "method_arg_match.inspect #{method_arg_match.inspect}"
+              method_args = ("#{method_arg_match[4]}" if method_arg_match[4])
               method_recorder_args = "'#{method_name}'#{",#{method_args}" if method_args}"
               #TODO handle case of a method call being passed a block (e.g. validates do custom validator end )
               method_recorder = (("self.__record_method_call(#{method_recorder_args})") if method_name.to_s != '__record_method_call')
-              new_method_body = method_body.gsub(/def (self\.)?#{method_name}(\(([^)]+)\))?/m, "class << self\ndefine_method('#{method_name}') do |#{method_args}|\n#{method_recorder}\n") + "\nend\n"
-              puts "<<< new singleton method body begins"
-              puts new_method_body
-              puts ">>> new singleton method body ends"
+              new_method_body = method_body.gsub(method_definition_regex, "class << self\ndefine_method('#{method_name}') do |#{method_args}|\n#{method_recorder}\n") + "\nend\n"
+              SuperModule.log "<<< new singleton method body begins"
+              SuperModule.log new_method_body
+              SuperModule.log ">>> new singleton method body ends"
               method_body = new_method_body
             else
               method_body = super_module_having_method_added.__super_module_class_methods.detect {|sm_method_name, sm_method_body| sm_method_name == method_name}[1]
             end
 
-            puts "  define_method #{method_name}"
+            SuperModule.log "  define_method #{method_name}"
             __super_module_class_methods << [method_name, method_body] 
             if super_module_having_method_added.nil?
-              puts "Adding method call recording ability to method body for #{self.inspect}.#{method_name}"
+              SuperModule.log "Adding method call recording ability to method body for #{self.inspect}.#{method_name}"
               __excluded_singleton_methods << method_name
               self.class_eval(method_body)
             end
-            puts "#{self} request for recording def method: #{method_name} has finished"
+            SuperModule.log "#{self} request for recording def method: #{method_name} has finished"
           end
           super
         end
@@ -104,55 +115,51 @@ module SuperModule
         # 2. super module class method calls for methods defined here (e.g. a module that def self.make_barrable and then call to make_barrable)
 
         def __record_method_call(method_name, *args, &block)
-          puts "#{self.inspect} requests recording method call: #{method_name}(#{args.to_a.map(&:to_s).join(",")})"
+          SuperModule.log "#{self.inspect} requests recording method call: #{method_name}(#{args.to_a.map(&:to_s).join(",")})"
           return if self.is_a?(Class)
-          puts "#{self.inspect} records method call: #{method_name}(#{args.to_a.map(&:to_s).join(",")})"
+          SuperModule.log "#{self.inspect} records method call: #{method_name}(#{args.to_a.map(&:to_s).join(",")})"
           __super_module_class_method_calls << [method_name, args, block]
         end
 
         #TODO rename class_method_calls to singleton_method_calls
         #TODO handle case where methods being invoked are also defined in the same super module not inherited from another super module (thus not recorded, are they?)
         def __invoke_super_module_class_method_calls(base)
-          puts "#{self.inspect}.__invoke_super_module_class_method_calls(#{base})"
-          $indent += '  '
-          puts "__super_module_class_method_calls.inspect: #{__super_module_class_method_calls.inspect}"
-          puts "included_super_modules: #{included_super_modules.inspect}"
-          puts "included_super_modules.map(&:__super_module_class_method_calls).flatten(1): #{included_super_modules.map(&:__super_module_class_method_calls).flatten(1)}"
+          SuperModule.log "#{self.inspect}.__invoke_super_module_class_method_calls(#{base})", :indent
+          SuperModule.log "__super_module_class_method_calls.inspect: #{__super_module_class_method_calls.inspect}"
+          SuperModule.log "included_super_modules: #{included_super_modules.inspect}"
+          SuperModule.log "included_super_modules.map(&:__super_module_class_method_calls).flatten(1): #{included_super_modules.map(&:__super_module_class_method_calls).flatten(1)}"
           all_class_method_calls = __super_module_class_method_calls + included_super_modules.map(&:__super_module_class_method_calls).flatten(1)
           all_class_method_calls_in_definition_order = all_class_method_calls.reverse
           all_class_method_calls_in_definition_order.each do |method_name, args, block|
             base.class_eval do
-              puts "#{method_name}(#{args.to_a.map(&:to_s).join(",")})"
+              SuperModule.log "#{method_name}(#{args.to_a.map(&:to_s).join(",")})"
               send(method_name, *args, &block)
             end
           end
-          $indent = $indent[0, $indent.length - 2]
-          puts "end of '#{self.inspect}.__invoke_super_module_class_method_calls(#{base})'\n"
+          SuperModule.log "end of '#{self.inspect}.__invoke_super_module_class_method_calls(#{base})'\n", :outdent
         end
 
         def __define_super_module_class_methods(base)
-          puts "#{self.inspect}.__define_super_module_class_methods(#{base})"
-          $indent += '  '
+          SuperModule.log "#{self.inspect}.__define_super_module_class_methods(#{base})", :indent
           __super_module_class_methods.each do |method_name, method_body|
-            puts "\n * Before adding method: #{method_name}"
-            puts "base class method size: #{base.methods.size}"
-            puts "<<< method begins"
-            puts method_body
-            puts ">>> method ends"
+            SuperModule.log "\n * Before adding method: #{method_name}"
+            SuperModule.log "base class method size: #{base.methods.size}"
+            SuperModule.log "<<< method begins"
+            SuperModule.log method_body
+            SuperModule.log ">>> method ends"
 
             base.class_eval(method_body)
 
-            puts " ** After adding method: #{method_name}"
-            puts "new base class method size: #{base.methods.size}"
+            SuperModule.log " ** After adding method: #{method_name}"
+            SuperModule.log "new base class method size: #{base.methods.size}"
             
           end
-          $indent = $indent[0, $indent.length - 2]
-          puts "end of '#{self.inspect}.__define_super_module_class_methods(#{base})'\n"
+          SuperModule.log "end of '#{self.inspect}.__define_super_module_class_methods(#{base})'\n", :outdent
         end
 
         def included(base)
-          puts "118: #{self.inspect}.included(#{base}) ..."
-          puts "#{base} includes #{self.inspect}"
+          SuperModule.log "118: #{self.inspect}.included(#{base}) ..."
+          SuperModule.log "#{base} includes #{self.inspect}"
           __define_super_module_class_methods(base)
           __invoke_super_module_class_method_calls(base)
         end

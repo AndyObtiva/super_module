@@ -18,3 +18,4 @@ if RUBY_VERSION >= '1.9' && !defined?(Rubinius)
 end
 require File.join(File.dirname(__FILE__), '..', 'lib', 'super_module')
 require File.join(File.dirname(__FILE__), 'support', 'support.rb')
+SuperModule.logger = Logger.new(STDOUT).tap {|logger| logger.level = Logger::DEBUG} 
