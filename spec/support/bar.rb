@@ -10,10 +10,6 @@ module Bar
   class << self
     include Forwardable
 
-    def bar
-      'self.bar'
-    end
-
     def barrable
       @barrable
     end
@@ -38,6 +34,13 @@ module Bar
 
   def bar
     'bar'
+  end
+
+  # Defines singleton method via a form of eval (class_eval) to provide as a test case for SuperModule
+  class_eval do
+    def self.bar
+      'self.bar'
+    end
   end
   
   def <=>(other)

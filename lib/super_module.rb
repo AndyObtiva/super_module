@@ -18,7 +18,6 @@ end
 module SuperModule
   def self.included(original_base)
     puts "#{original_base} includes SuperModule"
-    #TODO call super afterward?
     original_base.class_eval do
       class << self
 
@@ -155,10 +154,7 @@ module SuperModule
           puts "118: #{self.inspect}.included(#{base}) ..."
           puts "#{base} includes #{self.inspect}"
           __define_super_module_class_methods(base)
-
-          #TODO why is the following not getting called on FooActiveRecord???
           __invoke_super_module_class_method_calls(base)
-          #TODO call super?
         end
       end
     end
