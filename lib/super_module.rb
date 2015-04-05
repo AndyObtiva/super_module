@@ -12,7 +12,7 @@ require 'logger'
 #TODO sanitize logging debug messages to make more consumer developer friendly
 module SuperModule
   def self.logger
-    @logger ||= Logger.new(STDOUT)
+    @logger ||= Logger.new(STDOUT).tap {|logger_instance| logger_instance.level = Logger::INFO}
   end
   def self.logger=(logger_instance)
     @logger = logger_instance
@@ -83,11 +83,12 @@ module SuperModule
               method_definition_regex = /(send)?[ \t(:"']*def(ine_method)?[ \t,:"']+(self\.)?#{method_name}\)?[ \tdo{(|]*([^\n)|;]*)?[ \t)|;]*/m
               method_arg_match = method_body.match(method_definition_regex)
               SuperModule.log "method_arg_match.inspect #{method_arg_match.inspect}"
-              method_args = ("#{method_arg_match[4]}" if method_arg_match[4])
-              method_recorder_args = "'#{method_name}'#{",#{method_args}" if method_args}"
+              method_args = ("#{method_arg_match[4]}" if method_arg_match.to_a[4]).to_s.strip
+              method_recorder_args = "'#{method_name}'#{",#{method_args}" unless method_args.empty?}"
               #TODO handle case of a method call being passed a block (e.g. validates do custom validator end )
               method_recorder = (("self.__record_method_call(#{method_recorder_args})") if method_name.to_s != '__record_method_call')
-              new_method_body = method_body.gsub(method_definition_regex, "class << self\ndefine_method('#{method_name}') do |#{method_args}|\n#{method_recorder}\n") + "\nend\n"
+              method_body = "def #{method_name}\n#{method_body}\nend" if method_arg_match.nil?
+              new_method_body = method_body.sub(method_definition_regex, "class << self\ndefine_method('#{method_name}') do |#{method_args}|\n#{method_recorder}\n") + "\nend\n"
               SuperModule.log "<<< new singleton method body begins"
               SuperModule.log new_method_body
               SuperModule.log ">>> new singleton method body ends"
