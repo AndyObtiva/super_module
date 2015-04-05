@@ -15,7 +15,3 @@ group :development do
   gem "highline", "~> 1.6.21"
 end
 
-group :test do
-  gem "coveralls", "~> 0.7.11", :require => false
-end
-
