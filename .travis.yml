@@ -32,3 +32,6 @@ matrix:
       gemfile: ruby187.Gemfile
     - rvm: rbx-2.5.2
       gemfile: ruby187.Gemfile
+addons:
+  code_climate:
+    repo_token: adf08323...
