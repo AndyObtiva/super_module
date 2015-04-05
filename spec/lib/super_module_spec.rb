@@ -126,5 +126,4 @@ describe SuperModule do
     end
   end
 
-# TODO test special cases using inline eval, define_method
 end

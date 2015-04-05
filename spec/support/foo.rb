@@ -8,8 +8,11 @@ module Foo
     'self.foo'
   end
 
-  def self.meh
-    self
+  # Defines singleton method via define_method to provide as a test case for SuperModule
+  class << self
+    send(:define_method, :meh) do
+      self
+    end
   end
 
   def foo
