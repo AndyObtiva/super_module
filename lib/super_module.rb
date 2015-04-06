@@ -96,10 +96,9 @@ module SuperModule
             __super_module_singleton_methods << [method_name, method_body] 
             if __super_module_having_method(method_name).nil?
               __super_module_singleton_methods_excluded_from_base_definition << method_name
-              self.class_eval(method_body)
+              class_eval(method_body)
             end
           end
-          super
         end
 
         def __method_signature(method_name, args)
@@ -113,7 +112,8 @@ module SuperModule
         end
 
         def __all_module_body_method_calls_in_definition_order
-          all_module_body_method_calls = __module_body_method_calls + included_super_modules.map(&:__module_body_method_calls).flatten(1)
+          ancestor_module_body_method_calls = included_super_modules.map(&:__module_body_method_calls).flatten(1)
+          all_module_body_method_calls = __module_body_method_calls + ancestor_module_body_method_calls
           all_module_body_method_calls.reverse
         end
 
