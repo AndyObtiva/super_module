@@ -84,6 +84,10 @@ describe SuperModule do
     it 'provides class method self as the including base class as in the class method (meh)' do
       expect(subject.meh).to eq(subject)
     end
+
+         #TODO explicitly declare test cases in support files as it statements
+         #TODO test empty method definition
+         #TODO test empty method definition with comment
   end
 
   context "included by a module (Foo), included by another module (Bar), included by a third module (Baz) that is included by a class (BazActiveRecord)" do

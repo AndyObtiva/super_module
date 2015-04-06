@@ -8,8 +8,6 @@
 
 require 'method_source'
 require 'logger'
-#TODO refactor names to be much more friendly
-#TODO sanitize logging debug messages to make more consumer developer friendly
 module SuperModule
   LOG_LEVEL_DEFAULT = 'INFO'
   def self.logger
@@ -31,14 +29,12 @@ module SuperModule
     SuperModule.log "#{original_base} includes SuperModule"
     original_base.class_eval do
       class << self
-
         # excluded list of singleton methods to define (perhaps give a better name)
         def __super_module_singleton_methods_excluded_from_base_definition
           @__super_module_singleton_methods_excluded_from_base_definition ||= [
-            :__super_module_class_methods,
-            :__invoke_super_module_module_body_method_calls,
-            :__define_super_module_class_methods,
-            :__restore_original_method_missing,
+            :__super_module_singleton_methods,
+            :__invoke_module_body_method_calls,
+            :__define_super_module_singleton_methods,
             :__super_module_having_method,
             :included_super_modules,
             :included, 
@@ -49,12 +45,12 @@ module SuperModule
           ]
         end
 
-        def __super_module_module_body_method_calls
-          @__super_module_module_body_method_calls ||= []
+        def __module_body_method_calls
+          @__module_body_method_calls ||= []
         end
 
-        def __super_module_class_methods
-          @__super_module_class_methods ||= []
+        def __super_module_singleton_methods
+          @__super_module_singleton_methods ||= []
         end
         
         def included_super_modules
@@ -65,8 +61,6 @@ module SuperModule
           included_super_modules.detect {|included_super_module| included_super_module.methods.map(&:to_s).include?(method_name.to_s)}
         end
 
-        #TODO test empty method definition
-        #TODO test empty method definition with comment
         def __method_body(method_name)
             method_body = nil
             super_module_having_method_added = __super_module_having_method(method_name)
@@ -90,7 +84,7 @@ module SuperModule
               method_body = method_body.sub(method_definition_regex, "class << self\ndefine_method('#{method_name}') do |#{method_args}|\n#{method_call_recorder}\n") + "\nend\n"
               SuperModule.log "Method body after formatting: \n #{method_body}"
             else
-              method_body = super_module_having_method_added.__super_module_class_methods.detect {|sm_method_name, sm_method_body| sm_method_name == method_name}[1]
+              method_body = super_module_having_method_added.__super_module_singleton_methods.detect {|sm_method_name, sm_method_body| sm_method_name == method_name}[1]
               SuperModule.log "Method body obtained from ancestor super module: #{method_body}"
             end
             method_body
@@ -102,7 +96,7 @@ module SuperModule
             SuperModule.log "#{self} records def method: #{method_name} has been accepted"
             method_body = __method_body(method_name)
             SuperModule.log "  define_method #{method_name}"
-            __super_module_class_methods << [method_name, method_body] 
+            __super_module_singleton_methods << [method_name, method_body] 
             if __super_module_having_method(method_name).nil?
               SuperModule.log "Adding method call recording ability to method body for #{self.inspect}.#{method_name}"
               __super_module_singleton_methods_excluded_from_base_definition << method_name
@@ -118,45 +112,40 @@ module SuperModule
           SuperModule.log "#{self.inspect} requests recording method call: #{method_name}(#{args.to_a.map(&:to_s).join(",")})"
           return if self.is_a?(Class)
           SuperModule.log "#{self.inspect} records method call: #{method_name}(#{args.to_a.map(&:to_s).join(",")})"
-          __super_module_module_body_method_calls << [method_name, args, block]
+          __module_body_method_calls << [method_name, args, block]
         end
 
-        #TODO handle case where methods being invoked are also defined in the same super module not inherited from another super module (thus not recorded, are they?)
-        def __invoke_super_module_module_body_method_calls(base)
-          SuperModule.log "#{self.inspect}.__invoke_super_module_module_body_method_calls(#{base})", :indent
-          SuperModule.log "__super_module_module_body_method_calls.inspect: #{__super_module_module_body_method_calls.inspect}"
+        def __invoke_module_body_method_calls(base)
+          SuperModule.log "#{self.inspect}.__invoke_module_body_method_calls(#{base})", :indent
+          SuperModule.log "__module_body_method_calls.inspect: #{__module_body_method_calls.inspect}"
           SuperModule.log "included_super_modules: #{included_super_modules.inspect}"
-          SuperModule.log "included_super_modules.map(&:__super_module_module_body_method_calls).flatten(1): #{included_super_modules.map(&:__super_module_module_body_method_calls).flatten(1)}"
-          all_module_body_method_calls = __super_module_module_body_method_calls + included_super_modules.map(&:__super_module_module_body_method_calls).flatten(1)
+          all_module_body_method_calls = __module_body_method_calls + included_super_modules.map(&:__module_body_method_calls).flatten(1)
           all_module_body_method_calls_in_definition_order = all_module_body_method_calls.reverse
+          SuperModule.log "all_module_body_method_calls_in_definition_order: #{ all_module_body_method_calls_in_definition_order }"
           all_module_body_method_calls_in_definition_order.each do |method_name, args, block|
             base.class_eval do
-              SuperModule.log "#{method_name}(#{args.to_a.map(&:to_s).join(",")})"
+              SuperModule.log "Invoking #{base.inspect}.#{method_name}(#{args.to_a.map(&:to_s).join(",")})"
               send(method_name, *args, &block)
             end
           end
-          SuperModule.log "end of '#{self.inspect}.__invoke_super_module_module_body_method_calls(#{base})'\n", :outdent
+          SuperModule.log "end of '#{self.inspect}.__invoke_module_body_method_calls(#{base})'\n", :outdent
         end
 
-        def __define_super_module_class_methods(base)
-          SuperModule.log "#{self.inspect}.__define_super_module_class_methods(#{base})", :indent
-          __super_module_class_methods.each do |method_name, method_body|
+        def __define_super_module_singleton_methods(base)
+          SuperModule.log "#{self.inspect}.__define_super_module_singleton_methods(#{base})", :indent
+          __super_module_singleton_methods.each do |method_name, method_body|
             SuperModule.log "Before adding method #{method_name} the base class #{self.inspect} method count was: #{base.methods.size}"
             SuperModule.log "Adding method #{method_name} with method body: \n#{method_body}"
-
             base.class_eval(method_body)
-
             SuperModule.log "After adding method #{method_name} the new base class #{self.inspect} method count becomes: #{base.methods.size}"
-            
           end
-          SuperModule.log "end of '#{self.inspect}.__define_super_module_class_methods(#{base})'\n", :outdent
+          SuperModule.log "end of '#{self.inspect}.__define_super_module_singleton_methods(#{base})'\n", :outdent
         end
 
         def included(base)
-          SuperModule.log "118: #{self.inspect}.included(#{base}) ..."
           SuperModule.log "#{base} includes #{self.inspect}"
-          __define_super_module_class_methods(base)
-          __invoke_super_module_module_body_method_calls(base)
+          __define_super_module_singleton_methods(base)
+          __invoke_module_body_method_calls(base)
         end
       end
     end
