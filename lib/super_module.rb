@@ -93,7 +93,7 @@ module SuperModule
         def singleton_method_added(method_name)
           SuperModule.log "#{self.inspect} requests recording def method: #{method_name}"
           unless __super_module_singleton_methods_excluded_from_base_definition.include?(method_name)
-            SuperModule.log "#{self} records def method: #{method_name} has been accepted"
+            SuperModule.log "#{self} recording request for def method: #{method_name} has been accepted"
             method_body = __method_body(method_name)
             SuperModule.log "  define_method #{method_name}"
             __super_module_singleton_methods << [method_name, method_body] 
@@ -111,7 +111,7 @@ module SuperModule
         def __record_method_call(method_name, *args, &block)
           SuperModule.log "#{self.inspect} requests recording method call: #{method_name}(#{args.to_a.map(&:to_s).join(",")})"
           return if self.is_a?(Class)
-          SuperModule.log "#{self.inspect} records method call: #{method_name}(#{args.to_a.map(&:to_s).join(",")})"
+          SuperModule.log "#{self.inspect} recording request for method call: #{method_name}(#{args.to_a.map(&:to_s).join(",")}) has been accepted"
           __module_body_method_calls << [method_name, args, block]
         end
 
@@ -123,10 +123,8 @@ module SuperModule
           all_module_body_method_calls_in_definition_order = all_module_body_method_calls.reverse
           SuperModule.log "all_module_body_method_calls_in_definition_order: #{ all_module_body_method_calls_in_definition_order }"
           all_module_body_method_calls_in_definition_order.each do |method_name, args, block|
-            base.class_eval do
-              SuperModule.log "Invoking #{base.inspect}.#{method_name}(#{args.to_a.map(&:to_s).join(",")})"
-              send(method_name, *args, &block)
-            end
+            SuperModule.log "Invoking #{base.inspect}.#{method_name}(#{args.to_a.map(&:to_s).join(",")})"
+            base.send(method_name, *args, &block)
           end
           SuperModule.log "end of '#{self.inspect}.__invoke_module_body_method_calls(#{base})'\n", :outdent
         end
