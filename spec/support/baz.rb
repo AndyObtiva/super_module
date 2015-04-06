@@ -13,7 +13,7 @@ module Baz
   end
   
   def initialize(baz_factor)
-    puts "initialize_baz(#{baz_factor})"
+    SuperModule.log "initialize_baz(#{baz_factor})"
     super()
     @baz_factor = baz_factor
   end

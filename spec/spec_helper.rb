@@ -2,6 +2,7 @@ ENV['APP_ENV'] = 'test'
 ENV['CODECLIMATE_REPO_TOKEN'] = '0e64c46d3240d588d5bf60ac103b36c03ce382a879612b914404fa973f309d97'
 require 'rubygems'
 require 'bundler'
+puts '* * * SuperModule debug logging can be enabled by setting the environment variable SUPER_MODULE_LOG_LEVEL to DEBUG. For example: SUPER_MODULE_LOG_LEVEL=DEBUG rake'
 begin
   Bundler.setup(:default, :test)
 rescue Bundler::BundlerError => e
@@ -20,5 +21,4 @@ if RUBY_VERSION >= '1.9' && !defined?(Rubinius)
   end
 end
 require File.join(File.dirname(__FILE__), '..', 'lib', 'super_module')
-SuperModule.logger = Logger.new(STDOUT).tap {|logger| logger.level = Logger::DEBUG} 
 require File.join(File.dirname(__FILE__), 'support', 'support.rb')
