@@ -115,14 +115,16 @@ module SuperModule
           __module_body_method_calls << [method_name, args, block]
         end
 
-        def __invoke_module_body_method_calls(base)
-          SuperModule.log "#{self.inspect}.__invoke_module_body_method_calls(#{base})", :indent
+        def __all_module_body_method_calls_in_definition_order
           SuperModule.log "__module_body_method_calls.inspect: #{__module_body_method_calls.inspect}"
           SuperModule.log "included_super_modules: #{included_super_modules.inspect}"
-          all_module_body_method_calls = __module_body_method_calls + included_super_modules.map(&:__module_body_method_calls).flatten(1)
-          all_module_body_method_calls_in_definition_order = all_module_body_method_calls.reverse
+          __module_body_method_calls + included_super_modules.map(&:__module_body_method_calls).flatten(1).reverse
+        end
+
+        def __invoke_module_body_method_calls(base)
+          SuperModule.log "#{self.inspect}.__invoke_module_body_method_calls(#{base})", :indent
           SuperModule.log "all_module_body_method_calls_in_definition_order: #{ all_module_body_method_calls_in_definition_order }"
-          all_module_body_method_calls_in_definition_order.each do |method_name, args, block|
+          __all_module_body_method_calls_in_definition_order.each do |method_name, args, block|
             SuperModule.log "Invoking #{base.inspect}.#{method_name}(#{args.to_a.map(&:to_s).join(",")})"
             base.send(method_name, *args, &block)
           end
