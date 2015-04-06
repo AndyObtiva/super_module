@@ -75,12 +75,14 @@ module SuperModule
         end
 
         def __super_module_having_method(method_name)
-          included_super_modules.detect {|included_super_module| included_super_module.methods.include?(method_name)}
+          SuperModule.log "Included super modules: #{included_super_modules.inspect}"
+          included_super_modules.detect {|included_super_module| included_super_module.methods.map(&:to_s).include?(method_name.to_s)}
         end
 
         def __build_singleton_method_body_source(method_name)
+          SuperModule.log "Building singleton method body source for #{self.inspect}.#{method_name}"
           method_body = self.method(method_name).source
-          SuperModule.log "Method source for #{self.inspect}.#{method_name}: \n#{method_body}"
+          SuperModule.log "Raw method source for #{self.inspect}.#{method_name}: \n#{method_body}"
           method_definition_regex = /(send)?[ \t(:"']*def(ine_method)?[ \t,:"']+(self\.)?#{method_name}\)?[ \tdo{(|]*([^\n)|;]*)?[ \t)|;]*/m
           SuperModule.log "Method definition regex: #{method_definition_regex}"
           method_arg_match = method_body.match(method_definition_regex)
