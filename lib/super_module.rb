@@ -32,16 +32,18 @@ module SuperModule
         # excluded list of singleton methods to define (perhaps give a better name)
         def __super_module_singleton_methods_excluded_from_base_definition
           @__super_module_singleton_methods_excluded_from_base_definition ||= [
-            :__super_module_singleton_methods,
-            :__invoke_module_body_method_calls,
+            :__all_module_body_method_calls_in_definition_order,
             :__define_super_module_singleton_methods,
+            :__invoke_module_body_method_calls,
+            :__method_body,
             :__super_module_having_method,
-            :included_super_modules,
-            :included, 
-            :singleton_method_added,
+            :__super_module_singleton_methods,
             :class_eval,
             :dbg_print, #debugger library friendly exclusion
-            :dbg_puts #debugger library friendly exclusion
+            :dbg_puts, #debugger library friendly exclusion
+            :included, 
+            :included_super_modules,
+            :singleton_method_added
           ]
         end
 
@@ -118,12 +120,12 @@ module SuperModule
         def __all_module_body_method_calls_in_definition_order
           SuperModule.log "__module_body_method_calls.inspect: #{__module_body_method_calls.inspect}"
           SuperModule.log "included_super_modules: #{included_super_modules.inspect}"
-          __module_body_method_calls + included_super_modules.map(&:__module_body_method_calls).flatten(1).reverse
+          all_module_body_method_calls = __module_body_method_calls + included_super_modules.map(&:__module_body_method_calls).flatten(1)
+          all_module_body_method_calls.reverse.tap {|calls| SuperModule.log "__all_module_body_method_calls: #{ calls }"}
         end
 
         def __invoke_module_body_method_calls(base)
           SuperModule.log "#{self.inspect}.__invoke_module_body_method_calls(#{base})", :indent
-          SuperModule.log "all_module_body_method_calls_in_definition_order: #{ all_module_body_method_calls_in_definition_order }"
           __all_module_body_method_calls_in_definition_order.each do |method_name, args, block|
             SuperModule.log "Invoking #{base.inspect}.#{method_name}(#{args.to_a.map(&:to_s).join(",")})"
             base.send(method_name, *args, &block)
