@@ -1,4 +1,4 @@
-# SuperModule
+# SuperModule v1.1.0 [2015-04-06]
 [![Gem Version](https://badge.fury.io/rb/super_module.png)](http://badge.fury.io/rb/super_module)
 [![Build Status](https://api.travis-ci.org/AndyObtiva/super_module.png?branch=master)](https://travis-ci.org/AndyObtiva/super_module)
 [![Coverage Status](https://coveralls.io/repos/AndyObtiva/super_module/badge.png?branch=master)](https://coveralls.io/r/AndyObtiva/super_module?branch=master)
@@ -8,6 +8,8 @@ Tired of [Ruby](https://www.ruby-lang.org/en/)'s modules not allowing you to mix
 Tired of writing complex `self.included(base)` code or using over-engineered solutions like [`ActiveSupport::Concern`](http://api.rubyonrails.org/classes/ActiveSupport/Concern.html) to accomplish that goal?
 
 Well, worry no more! [SuperModule](https://rubygems.org/gems/super_module) comes to the rescue!
+
+![SuperModule](https://raw.githubusercontent.com/AndyObtiva/super_module/master/SuperModule.jpg)
 
 [SuperModule](https://rubygems.org/gems/super_module) allows defining class methods and method invocations the same way a super class does without using [`self.included(base)`](http://ruby-doc.org/core-2.2.1/Module.html#method-i-included).
 
@@ -261,39 +263,12 @@ Here is the general algorithm from the implementation:
 
 ```ruby
 def included(base)
-  __invoke_super_module_class_method_calls(base)
   __define_super_module_class_methods(base)
+  __invoke_super_module_class_method_calls(base)
 end
 ```
 
-#### 1) Invoke super module class method calls on the including base class.
-
-For example, suppose we have a super module called `Locatable`:
-
-```ruby
-module Locatable
-  include SuperModule
-  
-  validates :x_coordinate, numericality: true
-  validates :y_coordinate, numericality: true
-  
-  def move(x, y)
-    self.x_coordinate += x
-    self.y_coordinate += y
-  end
-end
-
-class Vehicle < ActiveRecord::Base
-  include Locatable
-# … more code follows
-end
-```
-
-This first step guarantees invocation of the two `Locatable` <code>validates</code> method calls on the `Vehicle` object class.
-
-It does so by relying on `method_missing(method_name, *args, &block)` to record every class method call that happens in the super module class body, and later replaying those calls on the including base class during `self.included(base)` by using Ruby's `send(method_name, *args, &block)` method introspection.
-
-#### 2) Defines super module class methods on the including base class
+#### 1) Defines super module class methods on the including base class
 
 For example, suppose we have a super module called Addressable:
 
@@ -318,11 +293,40 @@ class Contact < ActiveRecord::Base
 end
 ```
 
-The second step ensures that <code>merge_duplicates</code> is included in Contact as a class method, allowing the call <code>Contact.merge_duplicates</code>
+This step ensures that <code>merge_duplicates</code> is included in Contact as a class method, allowing the call <code>Contact.merge_duplicates</code>
 
-It does so by recording every class method defined using the <code>self.singleton_method_added(method_name)</code> added hook, and then later replaying these class definitions on the including base class during invocation of <code>self.included(base)</code>.
+It does so by recording every class method defined using the Ruby [`self.singleton_method_added(method_name)`](http://ruby-doc.org/core-2.2.1/BasicObject.html#method-i-singleton_method_added) hook, reading class method sources using the [method_source](https://rubygems.org/gems/method_source/) gem, and finally upon invocation of `self.included(base)`, `class_eval`ing the recorded class methods on the including base class (or module).
 
-In order to avoid interference with existing class method definitions, there is an exception list for what not to record, such as <code>:included, :method_missing, :singleton_method_added</code> and any other "__" prefixed class methods defined in [SuperModule](https://rubygems.org/gems/super_module), such as <code>__super_module_class_method_calls</code>.
+In order to avoid interference with existing class method definitions, there is an exception list for what not to record, such as <code>:included_super_modules, :class_eval, :singleton_method_added</code> and any other "__" prefixed class methods defined in [SuperModule](https://rubygems.org/gems/super_module), such as <code>__super_module_class_method_calls</code>.
+
+Also, the recorded class method sources are altered to handle recording of method calls as well, which is used in the second step explained next.
+
+#### 2) Invoke super module class method calls on the including base class (or module).
+
+For example, suppose we have a super module called `Locatable`:
+
+```ruby
+module Locatable
+  include SuperModule
+  
+  validates :x_coordinate, numericality: true
+  validates :y_coordinate, numericality: true
+  
+  def move(x, y)
+    self.x_coordinate += x
+    self.y_coordinate += y
+  end
+end
+
+class Vehicle < ActiveRecord::Base
+  include Locatable
+# … more code follows
+end
+```
+
+This step guarantees invocation of the two `Locatable` <code>validates</code> method calls on the `Vehicle` object class.
+
+It does so by relying on an interally defined method `__record_method_call(method_name, *args, &block)` to record every class method call that happens in the super module class body, and later replaying those calls on the including base class during `self.included(base)` by using Ruby's `send(method_name, *args, &block)` method introspection.
 
 ## Limitations and Caveats
 
@@ -348,6 +352,17 @@ module AdminIdentifiable
 ```
 In the future, [SuperModule](https://rubygems.org/gems/super_module) could perhaps provide robust built-in facilities for allowing super modules to easily hook into <code>self.included(base)</code> without interfering with [SuperModule](https://rubygems.org/gems/super_module) behavior.
 
+## What's New?
+
+### v1.1.0
+
+ * Brand new `self`-friendly algorithm that ensures true mixing of super module singleton methods into the including base class or module, thus always returning the actual base class or module `self` when invoking a super module inherited singleton method (thanks to [Banister](https://github.com/banister) for [reporting previous limitation on Reddit and providing suggestions](http://www.reddit.com/r/ruby/comments/30j66y/step_aside_activesupportconcern_supermodule_is/))
+ * New `included_super_modules` inherited singleton method that provides developer with a list of all included super modules similar to the Ruby `included_modules` method.
+ * No more use for method_missing (Thanks to Marc-André Lafortune for bringing up as a previous limitation in [AirPair article reviews](https://www.airpair.com/ruby/posts/step-aside-activesupportconcern-supermodule-is-the-new-sheriff-in-town))
+ * New dependency on [Banister](https://github.com/banister)'s [method_source](https://github.com/banister/method_source) library to have the self-friendly algorithm eval inherited class method sources into the including base class or module.
+ * Refactorings, including break-up of the original SuperModule into 3 modules in separate files
+ * More RSpec test coverage, including additional method definition scenarios, such as when adding dynamically via `class_eval` and `define_method`
+ 
 ## Feedback and Contribution
 
 [SuperModule](https://rubygems.org/gems/super_module) is written in a very clean and maintainable test-first approach, so you are welcome to read through the code on GitHub for more in-depth details:
