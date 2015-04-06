@@ -348,8 +348,6 @@ module AdminIdentifiable
 ```
 In the future, [SuperModule](https://rubygems.org/gems/super_module) could perhaps provide robust built-in facilities for allowing super modules to easily hook into <code>self.included(base)</code> without interfering with [SuperModule](https://rubygems.org/gems/super_module) behavior.
 
- * Given [SuperModule](https://rubygems.org/gems/super_module) relies on <code>method_missing(method_name, *args, &block)</code> inside <code>class << self</code>, a super module including it that needs to do some additional <code>method_missing(method_name, *args, &block)</code> meta-programming must not only alias it, but also be mindful of implications on [SuperModule](https://rubygems.org/gems/super_module) behavior.
-
 ## Feedback and Contribution
 
 [SuperModule](https://rubygems.org/gems/super_module) is written in a very clean and maintainable test-first approach, so you are welcome to read through the code on GitHub for more in-depth details:
