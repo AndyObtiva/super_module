@@ -69,7 +69,7 @@ module SuperModule
         end
 
         def __singleton_method_call_recorder(method_args, method_name)
-          method_call_recorder_args = "'#{method_name}'#{",#{method_args}" unless method_args.to_a.empty?}"
+          method_call_recorder_args = "'#{method_name}'#{",#{method_args}" unless [method_args].flatten.empty?}"
           (("self.__record_method_call(#{method_call_recorder_args})") unless __super_module_singleton_methods_excluded_from_call_recording.include?(method_name))
         end
   
