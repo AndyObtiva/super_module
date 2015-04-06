@@ -18,8 +18,11 @@ module SuperModule
             :__build_singleton_method_body_source,
             :__define_super_module_singleton_methods,
             :__invoke_module_body_method_calls,
+            :__singleton_method_args,
             :__singleton_method_body,
             :__singleton_method_body_for,
+            :__singleton_method_call_recorder,
+            :__singleton_method_definition_regex,
             :__super_module_having_method,
             :__super_module_singleton_methods,
             :__super_module_singleton_methods_excluded_from_base_definition,
@@ -60,17 +63,26 @@ module SuperModule
           included_super_modules.detect {|included_super_module| included_super_module.methods.map(&:to_s).include?(method_name.to_s)}
         end
 
+        def __singleton_method_definition_regex(method_name)
+          /(send)?[ \t(:"']*def(ine_method)?[ \t,:"']+(self\.)?#{method_name}\)?[ \tdo{(|]*([^\n)|;]*)?[ \t)|;]*/m
+        end
+
+        def __singleton_method_call_recorder(method_args, method_name)
+          method_call_recorder_args = "'#{method_name}'#{",#{method_args}" unless method_args.empty?}"
+          (("self.__record_method_call(#{method_call_recorder_args})") unless __super_module_singleton_methods_excluded_from_call_recording.include?(method_name))
+        end
+  
+        def __singleton_method_args(method_name, method_body)
+          method_arg_match = method_body.match(__singleton_method_definition_regex(method_name))
+          method_arg_match[4].strip if method_arg_match
+        end
+
         def __build_singleton_method_body_source(method_name)
           method_body = self.method(method_name).source
-          method_definition_regex = /(send)?[ \t(:"']*def(ine_method)?[ \t,:"']+(self\.)?#{method_name}\)?[ \tdo{(|]*([^\n)|;]*)?[ \t)|;]*/m
-          method_arg_match = method_body.match(method_definition_regex)
-          if method_arg_match.nil?
-            method_body = "def #{method_name}\n#{method_body}\nend" 
-          end
-          method_args = ("#{method_arg_match[4]}" if method_arg_match.to_a[4]).to_s.strip
-          method_call_recorder_args = "'#{method_name}'#{",#{method_args}" unless method_args.empty?}"
-          method_call_recorder = (("self.__record_method_call(#{method_call_recorder_args})") unless __super_module_singleton_methods_excluded_from_call_recording.include?(method_name))
-          method_body = method_body.sub(method_definition_regex, "class << self\ndefine_method('#{method_name}') do |#{method_args}|\n#{method_call_recorder}\n") + "\nend\n"
+          method_args = __singleton_method_args(method_name, method_body)
+          method_body = "def #{method_name}\n#{method_body}\nend" if method_args.nil?
+          class_self_method_def_enclosure = "class << self\ndefine_method('#{method_name}') do |#{method_args}|\n#{__singleton_method_call_recorder(method_args, method_name)}\n"
+          method_body.sub(__singleton_method_definition_regex(method_name), class_self_method_def_enclosure) + "\nend\n"
         end
 
         def __singleton_method_body(method_name)
