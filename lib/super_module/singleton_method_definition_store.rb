@@ -51,7 +51,7 @@ module SuperModule
     end
 
     def __singleton_method_args(method_name, method_body)
-      method_arg_match = method_body.match(__singleton_method_definition_regex(method_name))[4]
+      method_arg_match = method_body.match(__singleton_method_definition_regex(method_name)).to_a[4]
     end
 
     def __build_singleton_method_body_source(method_name)
@@ -83,7 +83,7 @@ module SuperModule
     end
 
     def self.extended(base)
-      base.extend(SuperModule::ModuleBodyMethodCallRecorder) unless base.singleton_class.include?(SuperModule::ModuleBodyMethodCallRecorder)
+      base.extend(SuperModule::ModuleBodyMethodCallRecorder) unless base.respond_to?(:__record_method_call)
       base.singleton_method_added(:__method_signature)
       base.singleton_method_added(:__record_method_call)
     end
