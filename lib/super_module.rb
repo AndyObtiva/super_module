@@ -18,6 +18,7 @@ module SuperModule
             :__build_singleton_method_body_source,
             :__define_super_module_singleton_methods,
             :__invoke_module_body_method_calls,
+            :__overwrite_singleton_method_from_current_super_module,
             :__singleton_method_args,
             :__singleton_method_body,
             :__singleton_method_body_for,
@@ -90,14 +91,18 @@ module SuperModule
             super_module_having_method ? __singleton_method_body_for(super_module_having_method, method_name) : __build_singleton_method_body_source(method_name) 
         end
 
+        def __overwrite_singleton_method_from_current_super_module(method_name, method_body)
+          if __super_module_having_method(method_name).nil?
+            __super_module_singleton_methods_excluded_from_base_definition << method_name
+            class_eval(method_body)
+          end
+        end
+
         def singleton_method_added(method_name)
           unless __super_module_singleton_methods_excluded_from_base_definition.include?(method_name)
             method_body = __singleton_method_body(method_name)
             __super_module_singleton_methods << [method_name, method_body] 
-            if __super_module_having_method(method_name).nil?
-              __super_module_singleton_methods_excluded_from_base_definition << method_name
-              class_eval(method_body)
-            end
+            __overwrite_singleton_method_from_current_super_module(method_name, method_body)
           end
         end
 
