@@ -33,9 +33,11 @@ module SuperModule
         def __super_module_singleton_methods_excluded_from_base_definition
           @__super_module_singleton_methods_excluded_from_base_definition ||= [
             :__all_module_body_method_calls_in_definition_order,
+            :__build_singleton_method_body_source,
             :__define_super_module_singleton_methods,
             :__invoke_module_body_method_calls,
-            :__method_body,
+            :__singleton_method_body,
+            :__singleton_method_body_for,
             :__super_module_having_method,
             :__super_module_singleton_methods,
             :__super_module_singleton_methods_excluded_from_base_definition,
@@ -68,45 +70,47 @@ module SuperModule
           included_modules.select {|m| m.include?(SuperModule)}
         end
 
+        def __singleton_method_body_for(super_module, method_name)
+          super_module.__super_module_singleton_methods.detect {|sm_method_name, sm_method_body| sm_method_name == method_name}[1]
+        end
+
         def __super_module_having_method(method_name)
           included_super_modules.detect {|included_super_module| included_super_module.methods.include?(method_name)}
         end
 
-        def __method_body(method_name)
-            method_body = nil
-            super_module_having_method_added = __super_module_having_method(method_name)
-            if super_module_having_method_added.nil?
-              method_body = self.method(method_name).source
-              SuperModule.log "Method source for #{self.inspect}.#{method_name}: \n#{method_body}"
-              method_definition_regex = /(send)?[ \t(:"']*def(ine_method)?[ \t,:"']+(self\.)?#{method_name}\)?[ \tdo{(|]*([^\n)|;]*)?[ \t)|;]*/m
-              SuperModule.log "Method definition regex: #{method_definition_regex}"
-              method_arg_match = method_body.match(method_definition_regex)
-              SuperModule.log "Method argument match: #{method_arg_match.inspect}"
-              if method_arg_match.nil?
-                method_body = "def #{method_name}\n#{method_body}\nend" 
-                SuperModule.log "Added method signature/end around signature-less method body: \n#{method_body}"
-              end
-              method_args = ("#{method_arg_match[4]}" if method_arg_match.to_a[4]).to_s.strip
-              SuperModule.log "Method arguments: #{method_args.inspect}"
-              method_call_recorder_args = "'#{method_name}'#{",#{method_args}" unless method_args.empty?}"
-              SuperModule.log "Method call recorder arguments: #{method_call_recorder_args.inspect}" 
-              SuperModule.log "__super_module_singleton_methods_excluded_from_call_recording: #{__super_module_singleton_methods_excluded_from_call_recording.inspect}"
-              method_call_recorder = (("self.__record_method_call(#{method_call_recorder_args})") unless __super_module_singleton_methods_excluded_from_call_recording.include?(method_name))
-              SuperModule.log "Method call recorder: #{method_call_recorder.inspect}" 
-              method_body = method_body.sub(method_definition_regex, "class << self\ndefine_method('#{method_name}') do |#{method_args}|\n#{method_call_recorder}\n") + "\nend\n"
-              SuperModule.log "Method body after formatting: \n#{method_body}"
-            else
-              method_body = super_module_having_method_added.__super_module_singleton_methods.detect {|sm_method_name, sm_method_body| sm_method_name == method_name}[1]
-              SuperModule.log "Method body obtained from ancestor super module: #{method_body}"
-            end
-            method_body
+        def __build_singleton_method_body_source(method_name)
+          method_body = self.method(method_name).source
+          SuperModule.log "Method source for #{self.inspect}.#{method_name}: \n#{method_body}"
+          method_definition_regex = /(send)?[ \t(:"']*def(ine_method)?[ \t,:"']+(self\.)?#{method_name}\)?[ \tdo{(|]*([^\n)|;]*)?[ \t)|;]*/m
+          SuperModule.log "Method definition regex: #{method_definition_regex}"
+          method_arg_match = method_body.match(method_definition_regex)
+          SuperModule.log "Method argument match: #{method_arg_match.inspect}"
+          if method_arg_match.nil?
+            method_body = "def #{method_name}\n#{method_body}\nend" 
+            SuperModule.log "Added method signature/end around signature-less method body: \n#{method_body}"
+          end
+          method_args = ("#{method_arg_match[4]}" if method_arg_match.to_a[4]).to_s.strip
+          SuperModule.log "Method arguments: #{method_args.inspect}"
+          method_call_recorder_args = "'#{method_name}'#{",#{method_args}" unless method_args.empty?}"
+          SuperModule.log "Method call recorder arguments: #{method_call_recorder_args.inspect}" 
+          SuperModule.log "__super_module_singleton_methods_excluded_from_call_recording: #{__super_module_singleton_methods_excluded_from_call_recording.inspect}"
+          method_call_recorder = (("self.__record_method_call(#{method_call_recorder_args})") unless __super_module_singleton_methods_excluded_from_call_recording.include?(method_name))
+          SuperModule.log "Method call recorder: #{method_call_recorder.inspect}" 
+          method_body = method_body.sub(method_definition_regex, "class << self\ndefine_method('#{method_name}') do |#{method_args}|\n#{method_call_recorder}\n") + "\nend\n"
+        end
+
+        def __singleton_method_body(method_name)
+            super_module_having_method = __super_module_having_method(method_name)
+            SuperModule.log "Super module having method with name #{method_name} is: #{super_module_having_method.inspect}"
+            method_body = super_module_having_method ? __singleton_method_body_for(super_module_having_method, method_name) : __build_singleton_method_body_source(method_name) 
+            method_body.tap {|body| SuperModule.log "Method body for #{method_name} is: \n#{method_body}"}
         end
 
         def singleton_method_added(method_name)
           SuperModule.log "#{self.inspect} requests recording def method: #{method_name}"
           unless __super_module_singleton_methods_excluded_from_base_definition.include?(method_name)
             SuperModule.log "#{self} recording request for def method: #{method_name} has been accepted"
-            method_body = __method_body(method_name)
+            method_body = __singleton_method_body(method_name)
             SuperModule.log "  define_method #{method_name}"
             __super_module_singleton_methods << [method_name, method_body] 
             if __super_module_having_method(method_name).nil?
