@@ -21,7 +21,6 @@ module Bar
     end
 
     def make_barrable
-      puts "make_barrable: Making #{self.inspect} barrable"
       self.barrable = true
     end
   end
