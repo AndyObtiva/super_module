@@ -324,8 +324,27 @@ You are welcome to read through the code for more in-depth details.
 
 ## Limitations and Caveats
 
- * SuperModule has been designed to be used only in the code definition of a module, not to be mixed in at run-time.
- * Initial Ruby runtime load of a class or module mixing in SuperModule will incur a very marginal performance hit (in the order of nano-to-milliseconds). However, class usage (instantiation and method invocation) will not incur any performance hit, running as fast as any other Ruby class.
+ * [SuperModule](https://rubygems.org/gems/super_module) has been designed to be used only in the code definition of a module, not to be mixed in at run-time.
+
+ * Initial Ruby runtime load of a class or module mixing in [SuperModule](https://rubygems.org/gems/super_module) will incur a very marginal performance hit (in the order of nano-to-milliseconds). However, class usage (instantiation and method invocation) will not incur any performance hit, running as fast as any other Ruby class.
+
+ * Given [SuperModule](https://rubygems.org/gems/super_module) relies on <code>self.included(base)</code> in its implementation, if an including super module (or a super module including another super module) must hook into <code>self.included(base)</code> for meta-programming cases that require it, such as conditional `include` statements or method definitions, it would have to alias <code>self.included(base)</code> and then invoke the aliased version in every super module that needs it like in this example: 
+```ruby 
+module AdminIdentifiable
+    include SuperModule
+    include UserIdentifiable
+    
+    class << self
+        alias included_super_module included
+        def included(base)
+            included_super_module(base)
+            # do some extra work 
+            # like conditional inclusion of other modules
+            # or conditional definition of methods
+        end
+    end
+```
+In the future, [SuperModule](https://rubygems.org/gems/super_module) could perhaps provide robust built-in facilities for allowing super modules to easily hook into <code>self.included(base)</code> without interfering with [SuperModule](https://rubygems.org/gems/super_module) behavior.
 
 ## Copyright
 
