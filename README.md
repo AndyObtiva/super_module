@@ -4,16 +4,13 @@
 [![Coverage Status](https://coveralls.io/repos/AndyObtiva/super_module/badge.png?branch=master)](https://coveralls.io/r/AndyObtiva/super_module?branch=master)
 [![Code Climate](https://codeclimate.com/github/AndyObtiva/super_module.png)](https://codeclimate.com/github/AndyObtiva/super_module)
 
-Tired of [Ruby](https://www.ruby-lang.org/en/)'s modules not allowing you to mix in class methods easily?
-Tired of writing complex `self.included(base)` code or using over-engineered solutions like [`ActiveSupport::Concern`](http://api.rubyonrails.org/classes/ActiveSupport/Concern.html) to accomplish that goal?
+Calling [Ruby](https://www.ruby-lang.org/en/)'s [`Module#include`](http://ruby-doc.org/core-2.2.1/Module.html#method-i-include) to mix in a module does not bring in class methods by default. This can come as quite a surprise whenever a developer attempts to include class methods via a module. Fortunately, Ruby does offer a solution in the form of implementing the hook method [`Module.included(base)`](http://ruby-doc.org/core-2.2.1/Module.html#method-i-included) [following a certain boilerplate code idiom](http://www.railstips.org/blog/archives/2009/05/15/include-vs-extend-in-ruby/). However, this solution can hinder code maintainability and productivity flow in a big production-environment project that takes advantage of many [mixins](http://en.wikipedia.org/wiki/Mixin) to model the business domain via composable object [traits](http://en.wikipedia.org/wiki/Trait_(computer_programming)). 
 
-Well, worry no more! [SuperModule](https://rubygems.org/gems/super_module) comes to the rescue!
+[`ActiveSupport::Concern`](http://api.rubyonrails.org/classes/ActiveSupport/Concern.html) is a popular Rails library that attempts to ease some of the boilerplate pain by offering a [DSL](http://www.infoq.com/news/2007/06/dsl-or-not) layer on top of [`Module.included(base)`](http://ruby-doc.org/core-2.2.1/Module.html#method-i-included). Unfortunately, while it improves the readability of the code needed to include class methods, it supports the same boilerplate idiom, thus feeling no more than putting a band-aid on the problem.
 
 ![SuperModule](https://raw.githubusercontent.com/AndyObtiva/super_module/master/SuperModule.jpg)
 
-[SuperModule](https://rubygems.org/gems/super_module) allows defining class methods and method invocations the same way a super class does without using [`self.included(base)`](http://ruby-doc.org/core-2.2.1/Module.html#method-i-included).
-
-This succeeds [`ActiveSupport::Concern`](http://api.rubyonrails.org/classes/ActiveSupport/Concern.html) by offering lighter syntax and simpler module dependency support.
+Fortunately, [SuperModule](https://rubygems.org/gems/super_module) comes to the rescue. Including `SuperModule` at the top of a Ruby module's body automatically ensures inclusion of class methods whenever a developer mixes it in via [`Module#include`](http://ruby-doc.org/core-2.2.1/Module.html#method-i-include).
 
 ## Introductory Comparison
 
