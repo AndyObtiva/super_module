@@ -1,14 +1,14 @@
-# SuperModule v1.1.0 [2015-04-06]
+<img src="https://raw.githubusercontent.com/AndyObtiva/super_module/master/SuperModule.jpg" alt="SuperModule" align="left" height="120" />
+<h1 class="vicinity rich-diff-level-zero" style="border-bottom: none"> SuperModule v1.1.0 [2015-04-06] </h1>
 [![Gem Version](https://badge.fury.io/rb/super_module.png)](http://badge.fury.io/rb/super_module)
 [![Build Status](https://api.travis-ci.org/AndyObtiva/super_module.png?branch=master)](https://travis-ci.org/AndyObtiva/super_module)
 [![Coverage Status](https://coveralls.io/repos/AndyObtiva/super_module/badge.png?branch=master)](https://coveralls.io/r/AndyObtiva/super_module?branch=master)
 [![Code Climate](https://codeclimate.com/github/AndyObtiva/super_module.png)](https://codeclimate.com/github/AndyObtiva/super_module)
 
+<br clear="both">
 Calling [Ruby](https://www.ruby-lang.org/en/)'s [`Module#include`](http://ruby-doc.org/core-2.2.1/Module.html#method-i-include) to mix in a module does not bring in class methods by default. This can come as quite a surprise whenever a developer attempts to include class methods via a module. Fortunately, Ruby does offer a solution in the form of implementing the hook method [`Module.included(base)`](http://ruby-doc.org/core-2.2.1/Module.html#method-i-included) [following a certain boilerplate code idiom](http://www.railstips.org/blog/archives/2009/05/15/include-vs-extend-in-ruby/). However, this solution can hinder code maintainability and productivity flow in a big production-environment project that takes advantage of many [mixins](http://en.wikipedia.org/wiki/Mixin) to model the business domain via composable object [traits](http://en.wikipedia.org/wiki/Trait_(computer_programming)). 
 
 [`ActiveSupport::Concern`](http://api.rubyonrails.org/classes/ActiveSupport/Concern.html) is a popular Rails library that attempts to ease some of the boilerplate pain by offering a [DSL](http://www.infoq.com/news/2007/06/dsl-or-not) layer on top of [`Module.included(base)`](http://ruby-doc.org/core-2.2.1/Module.html#method-i-included). Unfortunately, while it improves the readability of the code needed to include class methods, it supports the same boilerplate idiom, thus feeling no more than putting a band-aid on the problem.
-
-![SuperModule](https://raw.githubusercontent.com/AndyObtiva/super_module/master/SuperModule.jpg)
 
 Fortunately, [SuperModule](https://rubygems.org/gems/super_module) comes to the rescue. Including `SuperModule` at the top of a Ruby module's body automatically ensures inclusion of class methods whenever a developer mixes it in via [`Module#include`](http://ruby-doc.org/core-2.2.1/Module.html#method-i-include).
 
