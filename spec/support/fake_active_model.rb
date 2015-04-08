@@ -4,11 +4,13 @@ module FakeActiveModel
 
   include SuperModule
 
-  # Defines method on a single line to provide as a test case for SuperModule
-  def self.validates(attribute, options); validations << [attribute, options]; end
+  def self.validates(attribute, options)
+    validations << [attribute, options]
+  end
 
-  # Defines method on a single line to provide as a test case for SuperModule
-  def self.validations; @validations ||= []; end
+  def self.validations
+    @validations ||= []
+  end
 
 end
 

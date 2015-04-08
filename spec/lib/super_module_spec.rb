@@ -26,8 +26,63 @@ describe SuperModule do
       expect(subject.validations).to include(['foo', {:presence => true}])
     end
 
-    it 'includes class methods declared via "self.method_name"' do
+    it 'includes class method declared via "self.method_name"' do
       expect(subject.foo).to eq('self.foo')
+    end
+
+    it 'includes class method declared via "self.method_name" taking a single parameter' do
+      expect(subject.foo_single_param('param1_value')).to eq('self.foo(param1_value)')
+    end
+
+    it 'includes class method declared via "self.method_name" taking multiple parameters' do
+      expect(subject.foo_multi_params('param1_value', 'param2_value', 'param3_value')).to eq('self.foo(param1_value,param2_value,param3_value)')
+    end
+
+    it 'includes class method declared via "self.method_name" taking a block' do
+      formatter = Proc.new {|value| "Block formatted #{value}"}
+      expect(subject.foo_block(&formatter)).to eq('Block formatted self.foo')
+    end
+
+    it 'includes class method declared via "self.method_name" taking a single paramter and a block' do
+      formatter = Proc.new {|value, param1| "Block formatted #{value} with #{param1}"}
+      expect(subject.foo_single_param_block('param1_value', &formatter)).to eq('Block formatted self.foo with param1_value')
+    end
+
+    it 'includes class method declared via "self.method_name" taking multiple paramters and a block' do
+      formatter = Proc.new {|value, param1, param2, param3| "Block formatted #{value} with #{param1},#{param2},#{param3}"}
+      expect(subject.foo_multi_params_block('param1_value', 'param2_value', 'param3_value', &formatter)).to eq('Block formatted self.foo with param1_value,param2_value,param3_value')
+    end
+
+    it 'includes class method declared via "self.method_name" on one line' do
+      expect(subject.foo_one_line).to eq('self.foo_one_line')
+    end
+
+    it 'includes class method declared via "class < self"' do
+      expect(subject.foo_class_self).to eq('self.foo_class_self')
+    end
+
+    it 'includes class method declared via "class < self" using define_method' do
+      expect(subject.foo_class_self_define_method).to eq('self.foo_class_self_define_method')
+    end
+
+    it 'includes empty class method' do
+      expect(subject.empty).to eq(nil)
+    end
+
+    it 'includes empty class method with one empty line' do
+      expect(subject.empty_one_empty_line).to eq(nil)
+    end
+
+    it 'includes empty class method with comment' do
+      expect(subject.empty_with_comment).to eq(nil)
+    end
+
+    it 'includes empty class method one line definition' do
+      expect(subject.empty_one_line_definition).to eq(nil)
+    end
+
+    it 'includes empty class method one line definition with spaces' do
+      expect(subject.empty_one_line_definition_with_spaces).to eq(nil)
     end
 
     it 'includes instance methods' do
@@ -84,11 +139,6 @@ describe SuperModule do
     it 'provides class method self as the including base class as in the class method (meh)' do
       expect(subject.meh).to eq(subject)
     end
-
-         #TODO explicitly declare test cases in support files as it statements
-         #TODO test empty method definition
-         #TODO test empty method definition with comment
-         #TODO test case of method call receiving a block 
   end
 
   context "included by a module (Foo), included by another module (Bar), included by a third module (Baz) that is included by a class (BazActiveRecord)" do
