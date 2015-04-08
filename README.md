@@ -179,78 +179,78 @@ CourseEnrollment.new(course_id: course.id).valid?
  * A super module can only be included in a class or another super module
  * SuperModule adds <b>zero cost</b> to instantiation of including classes and invocation of included methods (both class and instance)
 
-## Another Example
+## IRB Example
 
-Copy and paste the following code snippets in <code>irb</code> and you should get the output denoted by double arrows (<code>=></code>).
+Create a ruby file called super_module_example.rb with the following content:
 
 ```ruby
+require 'rubygems' # to be backwards compatible with Ruby 1.8.7
 require 'super_module'
 
-module Foo
+module RequiresAttributes
   include SuperModule
 
-  validates :credit_card_id, presence: true
-
-  def foo
-    puts 'foo'
-    'foo'
+  def self.requires(*attributes)
+    attributes.each {|attribute| required_attributes << attribute}
   end
 
-  def self.foo
-    puts 'self.foo'
-    'self.foo'
+  def self.required_attributes
+    @required_attributes ||= []
   end
-end
-
-module Bar
-  include SuperModule
-  include Foo
-
-  validates :user_id, presence: true
-
-  def bar
-    puts 'bar'
-    'bar'
-  end
-
-  def self.bar
-    puts 'self.bar'
-    'self.bar'
+  
+  def requirements_satisfied?
+    !!self.class.required_attributes.reduce(true) { |result, required_attribute| result && send(required_attribute) }
   end
 end
 
-class MediaAuthorization < ActiveRecord::Base
-  include Bar
+class MediaAuthorization
+  include RequiresAttributes
+  attr_accessor :user_id, :credit_card_id
+  requires :user_id, :credit_card_id
 end
-
-MediaAuthorization.create.errors.messages.inspect
 ```
 
-=> "{:credit_card_id=>[\"can't be blank\"], :user_id=>[\"can't be blank\"]}"
+Open `rails console` and paste the following code snippets in. You should get the output denoted by double arrows (`=>`).
 
 ```ruby
-MediaAuthorization.new.foo
+require './super_module_irb_example.rb'
 ```
-
-=> "foo"
+=> true
 
 ```ruby
-MediaAuthorization.new.bar
+MediaAuthorization.required_attributes
 ```
-
-=> "bar"
+=> [:user_id, :credit_card_id]
 
 ```ruby
-MediaAuthorization.foo
+media_authorization = MediaAuthorization.new # resulting object print-out varies
 ```
-
-=> "self.foo"
+=> #<MediaAuthorization:0x832b36be1>
 
 ```ruby
-MediaAuthorization.bar
+media_authorization.requirements_satisfied?
 ```
+=> false
 
-=> "self.bar"
+```ruby
+media_authorization.user_id = 387
+```
+=> 387
+
+```ruby
+media_authorization.requirements_satisfied?
+```
+=> false
+
+```ruby
+media_authorization.credit_card_id = 37
+```
+=> 37
+
+```ruby
+media_authorization.requirements_satisfied?
+```
+=> true
 
 ## How Does It Work?
 
