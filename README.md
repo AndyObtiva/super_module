@@ -167,7 +167,8 @@ CourseEnrollment.new(course_id: course.id).valid?
 
  * SuperModule: name of the library and Ruby module that provides functionality via mixin
  * Super module: any Ruby module that mixes in SuperModule
- * Class method definition: Ruby class or module method declared with <code>self.method_name</code> or <code>class << self</code>
+ * Singleton class: also known as the [metaclass](https://rubymonk.com/learning/books/4-ruby-primer-ascent/chapters/39-ruby-s-object-model/lessons/131-singleton-methods-and-metaclasses) or [eigenclass](http://eigenjoy.com/2008/05/29/railsconf08-meta-programming-ruby-for-fun-and-profit/), it is the object-instance-associated class copy available to every object in Ruby (e.g. every `Object.new` instance has a singleton class that is a copy of the `Object` class, which can house instance-specific behavior if needed)
+ * Singleton method: an instance method defined on an object's singleton class. Often used to refer to a class or module method defined on the [Ruby class object or module object singleton class](http://ruby-doc.com/docs/ProgrammingRuby/html/classes.html) via `def self.method_name(...)` or `class << self` enclosing `def method_name(...)`
  * Class method invocation: Inherited Ruby class or module method invoked in the body of a class or module (e.g. <code>validates :username, presence: true</code>)
  * Code-time: Time of writing code in a Ruby file as opposed to Run-time
  * Run-time: Time of executing Ruby code
