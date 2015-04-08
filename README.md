@@ -329,7 +329,7 @@ It does so by relying on an interally defined method `__record_method_call(metho
 
  * Initial Ruby runtime load of a class or module mixing in [SuperModule](https://rubygems.org/gems/super_module) will incur a very marginal performance hit (in the order of nano-to-milliseconds). However, class usage (instantiation and method invocation) will not incur any performance hit, running as fast as any other Ruby class.
 
- * Given [SuperModule](https://rubygems.org/gems/super_module) relies on <code>self.included(base)</code> in its implementation, if an including super module (or a super module including another super module) must hook into <code>self.included(base)</code> for meta-programming cases that require it, such as conditional `include` statements or method definitions, it would have to alias <code>self.included(base)</code> and then invoke the aliased version in every super module that needs it like in this example: 
+ * Given [SuperModule](https://rubygems.org/gems/super_module)'s implementation relies on `self.included(base)`, if an including super module (or a super module including another super module) must hook into <code>self.included(base)</code> for meta-programming cases that require it, such as conditional `include` statements or method definitions, it would have to alias <code>self.included(base)</code> and then invoke the aliased version in every super module that needs it like in this example: 
 ```ruby 
 module AdminIdentifiable
     include SuperModule
@@ -347,6 +347,8 @@ module AdminIdentifiable
 ```
 In the future, [SuperModule](https://rubygems.org/gems/super_module) could perhaps provide robust built-in facilities for allowing super modules to easily hook into <code>self.included(base)</code> without interfering with [SuperModule](https://rubygems.org/gems/super_module) behavior.
 
+ * Only public singleton methods are copied by [SuperModule](https://rubygems.org/gems/super_module) to an including class (or module)
+ 
 ## What's New?
 
 ### v1.1.0
