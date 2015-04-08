@@ -181,7 +181,7 @@ CourseEnrollment.new(course_id: course.id).valid?
 
 ## IRB Example
 
-Create a ruby file called super_module_example.rb with the following content:
+Create a ruby file called super_module_irb_example.rb with the following content:
 
 ```ruby
 require 'rubygems' # to be backwards compatible with Ruby 1.8.7
@@ -210,7 +210,7 @@ class MediaAuthorization
 end
 ```
 
-Open `rails console` and paste the following code snippets in. You should get the output denoted by double arrows (`=>`).
+Open `irb` ([Interactive Ruby](https://www.ruby-lang.org/en/documentation/quickstart/)) and paste the following code snippets in. You should get the output denoted by the rockets (`=>`).
 
 ```ruby
 require './super_module_irb_example.rb'
