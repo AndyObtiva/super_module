@@ -19,7 +19,9 @@ module SuperModule
       class << self
         def __define_super_module_singleton_methods(base)
           __super_module_singleton_methods.each do |method_name, method_body|
-            base.class_eval(method_body)
+            # The following is needed for cases where a method is declared public/protected/private after it was added
+            refreshed_access_level_method_body = method_body.sub(/class << self\n(public|protected|private)\n/, "class << self\n#{__singleton_method_access_level(method_name)}\n")
+            base.class_eval(refreshed_access_level_method_body)
           end
         end
 

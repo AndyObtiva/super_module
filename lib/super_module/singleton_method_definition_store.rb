@@ -42,23 +42,38 @@ module SuperModule
       included_modules.select {|m| m.include?(SuperModule)}
     end
 
+    def __all_methods(object)
+      object.public_methods + object.protected_methods + object.private_methods
+    end
+
     def __super_module_having_method(method_name)
-      included_super_modules.detect {|included_super_module| included_super_module.methods.map(&:to_s).include?(method_name.to_s)}
+      included_super_modules.detect {|included_super_module| __all_methods(included_super_module).map(&:to_s).include?(method_name.to_s)}
     end
 
     def __singleton_method_definition_regex(method_name)
-      /(send)?[ \t(:"']*def(ine_method)?[ \t,:"']+(self\.)?#{method_name}\)?[ \tdo{(|]*([^\n)|;]*)?[ \t)|;]*/m
+      /(public|protected|private)?(send)?[ \t(:"']*def(ine_method)?[ \t,:"']+(self\.)?#{method_name}\)?[ \tdo{(|]*([^\n)|;]*)?[ \t)|;]*/m
     end
 
     def __singleton_method_args(method_name, method_body)
-      method_arg_match = method_body.match(__singleton_method_definition_regex(method_name)).to_a[4]
+      method_arg_match = method_body.match(__singleton_method_definition_regex(method_name)).to_a[5]
+    end
+
+    def __singleton_method_access_level(method_name)
+      method_name = method_name.to_s
+      if self.private_methods.map(&:to_s).include?(method_name)
+        'private'
+      elsif self.protected_methods.map(&:to_s).include?(method_name)
+        'protected'
+      elsif self.methods.map(&:to_s).include?(method_name)
+        'public'
+      end
     end
 
     def __build_singleton_method_body_source(method_name)
       method_body = self.method(method_name).source
       method_args = __singleton_method_args(method_name, method_body)
       method_body = "def #{method_name}\n#{method_body}\nend" if method_args.nil?
-      class_self_method_def_enclosure = "class << self\ndefine_method('#{method_name}') do |#{method_args}|\n#{__singleton_method_call_recorder(method_name, method_args)}\n"
+      class_self_method_def_enclosure = "class << self\n#{__singleton_method_access_level(method_name)}\ndef #{method_name}(#{method_args})\n#{__singleton_method_call_recorder(method_name, method_args)}\n"
       method_body.sub(__singleton_method_definition_regex(method_name), class_self_method_def_enclosure) + "\nend\n"
     end
 

@@ -65,6 +65,18 @@ describe SuperModule do
       expect(subject.foo_class_self_define_method).to eq('self.foo_class_self_define_method')
     end
 
+    it 'includes private class method' do
+      expect{subject.foo_private}.to raise_error
+      expect(subject.private_methods.map(&:to_s)).to include('foo_private')
+      expect(subject.send(:foo_private)).to eq('self.foo_private')
+    end
+
+    it 'includes protected class method (declared using protected :method_name)' do
+      expect{subject.foo_protected}.to raise_error
+      expect(subject.protected_methods.map(&:to_s)).to include('foo_protected')
+      expect(subject.send(:foo_protected)).to eq('self.foo_protected')
+    end
+
     it 'includes empty class method' do
       expect(subject.empty).to eq(nil)
     end

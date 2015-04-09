@@ -10,6 +10,27 @@ module Foo
     end
 
     def foo_class_self_define_method; 'self.foo_class_self_define_method'; end
+
+    def foo_private_declaration_follow_up
+      'self.foo_private_declaration_follow_up'
+    end
+    private :foo_private_declaration_follow_up
+
+    def foo_protected_declaration_follow_up
+      'self.foo_protected_declaration_follow_up'
+    end
+    protected :foo_protected_declaration_follow_up
+
+    private 
+    def foo_private
+      'self.foo_private'
+    end
+  
+    protected
+    def foo_protected
+      'self.foo_protected'
+    end
+
   end
 
   def self.meh
@@ -41,6 +62,8 @@ module Foo
   def self.foo_multi_params_block(param1, param2, param3, &formatter)
     formatter.call('self.foo', param1, param2, param3)
   end
+
+  public
 
   def self.empty
   end
