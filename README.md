@@ -348,8 +348,6 @@ module AdminIdentifiable
 ```
 In the future, [SuperModule](https://rubygems.org/gems/super_module) could perhaps provide robust built-in facilities for allowing super modules to easily hook into <code>self.included(base)</code> without interfering with [SuperModule](https://rubygems.org/gems/super_module) behavior.
 
- * Only public singleton methods are copied by [SuperModule](https://rubygems.org/gems/super_module) to an including class (or module)
- 
 ## What's New?
 
 ### v1.1.0
