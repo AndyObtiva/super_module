@@ -59,13 +59,9 @@ module SuperModule
     end
 
     def __singleton_method_access_level(method_name)
-      method_name = method_name.to_s
-      if self.private_methods.map(&:to_s).include?(method_name)
-        'private'
-      elsif self.protected_methods.map(&:to_s).include?(method_name)
-        'protected'
-      elsif self.methods.map(&:to_s).include?(method_name)
-        'public'
+      %w(private protected public).detect do |method_access|
+        method_group = "#{method_access}_methods"
+        send(method_group).map(&:to_s).include?(method_name.to_s)
       end
     end
 
