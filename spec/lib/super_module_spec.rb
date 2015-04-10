@@ -153,7 +153,7 @@ describe SuperModule do
     end
   end
 
-  context "included by a module (Foo), included by another module (Bar), included by a third module (Baz) that is included by a class (BazActiveRecord)" do
+  context "(with SuperModule.define alternate syntax in Baz) included by a module (Foo), included by another module (Bar), included by a third module (Baz) that is included by a class (BazActiveRecord)" do
 
     subject { BazActiveRecord }
 

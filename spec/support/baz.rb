@@ -1,6 +1,4 @@
-module Baz
-
-  include SuperModule
+Baz = SuperModule.define do
   include Bar
   make_barrable
   validates 'baz', {:presence => true}

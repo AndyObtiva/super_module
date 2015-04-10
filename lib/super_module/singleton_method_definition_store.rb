@@ -24,9 +24,11 @@ module SuperModule
         :class_eval,
         :dbg_print, #debugger library friendly exclusion
         :dbg_puts, #debugger library friendly exclusion
+        :define,
         :included, 
         :included_super_modules,
-        :singleton_method_added
+        :singleton_method_added,
+        :super_module_body
       ]
     end
 
