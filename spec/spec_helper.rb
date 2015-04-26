@@ -20,4 +20,4 @@ if RUBY_VERSION >= '1.9' && !defined?(Rubinius)
   end
 end
 require File.join(File.dirname(__FILE__), '..', 'lib', 'super_module')
-require File.join(File.dirname(__FILE__), 'support', 'support.rb')
+require File.join(File.dirname(__FILE__), 'support.rb')

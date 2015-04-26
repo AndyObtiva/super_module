@@ -3,19 +3,19 @@ require 'spec_helper'
 describe SuperModule do
 
   class FakeActiveRecord
-    include FakeActiveModel
+    include V1::FakeActiveModel
   end
 
   class FooActiveRecord < FakeActiveRecord
-    include Foo
+    include V1::Foo
   end
 
   class BarActiveRecord < FakeActiveRecord
-    include Bar
+    include V1::Bar
   end
 
   class BazActiveRecord < FakeActiveRecord
-    include Baz
+    include V1::Baz
   end
 
   context "included by a module (Foo) that is included by a class (FooActiveRecord)" do
