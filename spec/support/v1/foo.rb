@@ -1,7 +1,6 @@
-module V1::Foo
-
+module Support::V1::Foo
   include SuperModule
-  include V1::FakeActiveModel
+  include Support::V1::FakeActiveModel
   validates 'foo', {:presence => true}
 
   class << self

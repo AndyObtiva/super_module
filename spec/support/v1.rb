@@ -1,4 +1,4 @@
-module V1
+module Support::V1
 end
 require File.join(File.dirname(__FILE__), 'v1', 'fake_active_model')
 require File.join(File.dirname(__FILE__), 'v1', 'foo')

@@ -1,7 +1,7 @@
 require 'forwardable'
 
-super_module 'V2::Bar'
-  include V2::Foo
+super_module 'Support::V2::Bar' do
+  include Support::V2::Foo
   include Comparable
   validates 'bar', {:presence => true}
   attr_reader :created_at

@@ -1,6 +1,6 @@
-module V1::Baz
+module Support::V1::Baz
   include SuperModule
-  include V1::Bar
+  include Support::V1::Bar
   make_barrable
   validates 'baz', {:presence => true}
   attr_reader :baz_factor

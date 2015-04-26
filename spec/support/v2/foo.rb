@@ -1,5 +1,5 @@
-super_module 'V2::Foo'
-  include V2::FakeActiveModel
+super_module 'Support::V2::Foo' do
+  include Support::V2::FakeActiveModel
   validates 'foo', {:presence => true}
 
   class << self
