@@ -1,4 +1,4 @@
-super_module 'V2::Baz' do
+super_module 'Support::V2::Baz' do
   include Support::V2::Bar
   make_barrable
   validates 'baz', {:presence => true}

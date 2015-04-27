@@ -1,6 +1,6 @@
 source "http://rubygems.org"
 
-gem "method_source", "~> 0.8.2"
+gem "method_source", "~> 0.8.2", :require => false
 
 group :development do
 #  gem "jeweler", "~> 2.0.1"

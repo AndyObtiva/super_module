@@ -7,10 +7,6 @@
 # This module allows defining class methods and method invocations the same way a super class does without using def included(base).
 
 # Avoiding require_relative for backwards compatibility with Ruby 1.8.7
-require File.expand_path(File.join(File.dirname(__FILE__), 'super_module', 'v1'))
-
-def super_module(name)
-end
 
 module SuperModule
   class << self
@@ -25,10 +21,31 @@ module SuperModule
       if super_module_body
         original_base.class_eval(&super_module_body)
       else
+        require File.expand_path(File.join(File.dirname(__FILE__), 'super_module', 'v1'))
         original_base.send(:include, SuperModule::V1)
+      end
+    end
+
+    def __super_module_parent(name, ancestor)
+      name_tokens = name.to_s.split('::')
+      name_token_count = name_tokens.size
+      if name_token_count == 1
+        ancestor
+      else
+        top_ancestor = ancestor.const_get(name_tokens.first)
+        sub_module_name = name_tokens[1, name_token_count].join('::')
+        __super_module_parent(sub_module_name, top_ancestor)
       end
     end
 
   end
   
 end
+
+def super_module(name, &super_module_body)
+  initial_ancestor = self.class == Object ? Object : self
+  parent = SuperModule.__super_module_parent(name, initial_ancestor)
+  module_name = name.to_s.split('::').last
+  parent.const_set(module_name, SuperModule.define(&super_module_body))
+end
+

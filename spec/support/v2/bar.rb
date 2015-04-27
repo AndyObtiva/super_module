@@ -1,50 +1,52 @@
 require 'forwardable'
 
-super_module 'Support::V2::Bar' do
-  include Support::V2::Foo
-  include Comparable
-  validates 'bar', {:presence => true}
-  attr_reader :created_at
+module Support::V2
+  super_module :Bar do
+    include Foo
+    include Comparable
+    validates 'bar', {:presence => true}
+    attr_reader :created_at
 
-  # Defines singleton methods via class << self to provide as a test case for SuperModule
-  class << self
-    include Forwardable
+    # Defines singleton methods via class << self to provide as a test case for SuperModule
+    class << self
+      include Forwardable
 
-    def barrable
-      @barrable
+      def barrable
+        @barrable
+      end
+
+      def barrable=(value)
+        @barrable = value
+      end
+
+      def make_barrable
+        self.barrable = true
+      end
     end
 
-    def barrable=(value)
-      @barrable = value
+    make_barrable
+    def_delegators :@bar, :length
+
+    def initialize
+      @bar = bar
+      @created_at = Time.now.to_f
     end
 
-    def make_barrable
-      self.barrable = true
+    def bar
+      'bar'
     end
-  end
 
-  make_barrable
-  def_delegators :@bar, :length
-
-  def initialize
-    @bar = bar
-    @created_at = Time.now.to_f
-  end
-
-  def bar
-    'bar'
-  end
-
-  # Defines singleton method via a form of eval (class_eval) to provide as a test case for SuperModule
-  class_eval do
-    def self.bar
-      'self.bar'
+    # Defines singleton method via a form of eval (class_eval) to provide as a test case for SuperModule
+    class_eval do
+      def self.bar
+        'self.bar'
+      end
     end
-  end
-  
-  def <=>(other)
-    created_at <=> other.created_at
+    
+    def <=>(other)
+      created_at <=> other.created_at
+    end
+
   end
 
 end
-
