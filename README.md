@@ -142,8 +142,7 @@ end
 class CourseEnrollment < ActiveRecord::Base
   include UserIdentifiable
 end
-module Accountable
-  include SuperModule
+super_module :Accountable do
   include UserIdentifiable
 end
 class Activity < ActiveRecord::Base
@@ -186,8 +185,7 @@ Create a ruby file called super_module_irb_example.rb with the following content
 require 'rubygems' # to be backwards compatible with Ruby 1.8.7
 require 'super_module'
 
-module RequiresAttributes
-  include SuperModule
+super_module :RequiresAttributes do
 
   def self.requires(*attributes)
     attributes.each {|attribute| required_attributes << attribute}
@@ -266,7 +264,7 @@ V2 has a much simpler algorithm than V1 that goes as follows:
 
  * Given [SuperModule](https://rubygems.org/gems/super_module)'s implementation relies on `self.included(base)`, if an including super module (or a super module including another super module) must hook into <code>self.included(base)</code> for meta-programming cases that require it, such as conditional `include` statements or method definitions, it would have to alias <code>self.included(base)</code> and then invoke the aliased version in every super module that needs it like in this example: 
 ```ruby 
-super_module AdminIdentifiable do
+super_module :AdminIdentifiable do
     include UserIdentifiable
     
     class << self
