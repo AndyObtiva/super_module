@@ -1,4 +1,4 @@
-# <img src="https://raw.githubusercontent.com/AndyObtiva/super_module/master/SuperModule.jpg" alt="SuperModule" align="left" height="50" /> &nbsp; SuperModule v1.1.1 [2015-04-09]
+# <img src="https://raw.githubusercontent.com/AndyObtiva/super_module/master/SuperModule.jpg" alt="SuperModule" align="left" height="50" /> &nbsp; SuperModule 2 [2015-04-26]
 [![Gem Version](https://badge.fury.io/rb/super_module.svg)](http://badge.fury.io/rb/super_module)
 [![Build Status](https://api.travis-ci.org/AndyObtiva/super_module.svg?branch=master)](https://travis-ci.org/AndyObtiva/super_module)
 [![Coverage Status](https://coveralls.io/repos/AndyObtiva/super_module/badge.svg?branch=master)](https://coveralls.io/r/AndyObtiva/super_module?branch=master)
@@ -72,8 +72,7 @@ A step forward that addresses the boiler-plate repetitive code concern, but is o
 #### 3) [SuperModule](https://github.com/AndyObtiva/super_module)
 
 ```ruby
-module UserIdentifiable
-  include SuperModule
+super_module :UserIdentifiable do
   include ActiveModel::Model
   
   belongs_to :user
@@ -89,7 +88,7 @@ module UserIdentifiable
 end
 ```
 
-With `include SuperModule` declared on top, developers can directly add class method invocations and definitions inside the module's body, and [`SuperModule`](https://github.com/AndyObtiva/super_module) takes care of automatically mixing them into classes that include the module.
+Using `super_module`, developers can directly add class method invocations and definitions inside the module's body, and [`SuperModule`](https://github.com/AndyObtiva/super_module) takes care of automatically mixing them into classes that include the module.
 
 As a result, [SuperModule](https://rubygems.org/gems/super_module) collapses the difference between extending a super class and including a super module, thus encouraging developers to write simpler code while making better Object-Oriented Design decisions. 
 
@@ -115,11 +114,10 @@ Run the following command: <pre>gem install super_module</pre>
 
 Add the following at the top of your [Ruby](https://www.ruby-lang.org/en/) file: <pre>require 'super_module'</pre>
 
-#### 2) Include [`SuperModule`](https://rubygems.org/gems/super_module) at the top of the module
+#### 2) Call `super_module(name)` and pass it the super module body in a block
 
 ```ruby
-module UserIdentifiable
-  include SuperModule
+super_module :UserIdentifiable do
   include ActiveModel::Model
 
   belongs_to :user
@@ -255,85 +253,20 @@ media_authorization.requirements_satisfied?
 
 ## How Does It Work?
 
-Here is the general algorithm from the implementation:
+V2 has a much simpler algorithm than V1 that goes as follows:
 
-```ruby
-def included(base)
-  __define_super_module_class_methods(base)
-  __invoke_super_module_class_method_calls(base)
-end
-```
-
-#### 1) Defines super module class methods on the including base class
-
-For example, suppose we have a super module called Addressable:
-
-```ruby
-module Addressable
-  include SuperModule
-  
-  include Locatable
-  validates :city, presence: true, length: { maximum: 255 }
-  validates :state, presence: true, length: { is: 2 }
-
-  def self.merge_duplicates
-    # 1. Look through all Addressable instances in the database
-    # 2. Identify duplicates
-    # 3. Merge duplicate addressables
-  end
-end
-
-class Contact < ActiveRecord::Base
-  include Addressable
-# … more code follows
-end
-```
-
-This step ensures that <code>merge_duplicates</code> is included in Contact as a class method, allowing the call <code>Contact.merge_duplicates</code>
-
-It does so by recording every class method defined using the Ruby [`self.singleton_method_added(method_name)`](http://ruby-doc.org/core-2.2.1/BasicObject.html#method-i-singleton_method_added) hook, reading class method sources using the [method_source](https://rubygems.org/gems/method_source/) gem, and finally upon invocation of `self.included(base)`, `class_eval`ing the recorded class methods on the including base class (or module).
-
-In order to avoid interference with existing class method definitions, there is an exception list for what not to record, such as <code>:included_super_modules, :class_eval, :singleton_method_added</code> and any other "__" prefixed class methods defined in [SuperModule](https://rubygems.org/gems/super_module), such as <code>__super_module_class_method_calls</code>.
-
-Also, the recorded class method sources are altered to handle recording of method calls as well, which is used in the second step explained next.
-
-#### 2) Invoke super module class method calls on the including base class (or module).
-
-For example, suppose we have a super module called `Locatable`:
-
-```ruby
-module Locatable
-  include SuperModule
-  
-  validates :x_coordinate, numericality: true
-  validates :y_coordinate, numericality: true
-  
-  def move(x, y)
-    self.x_coordinate += x
-    self.y_coordinate += y
-  end
-end
-
-class Vehicle < ActiveRecord::Base
-  include Locatable
-# … more code follows
-end
-```
-
-This step guarantees invocation of the two `Locatable` <code>validates</code> method calls on the `Vehicle` object class.
-
-It does so by relying on an interally defined method `__record_method_call(method_name, *args, &block)` to record every class method call that happens in the super module class body, and later replaying those calls on the including base class during `self.included(base)` by using Ruby's `send(method_name, *args, &block)` method introspection.
+1. Handle invocation of `super_module(name, &super_module_body)` method anywhere in the Ruby code where the block it receives represents the super module body, including instance methods, and class methods, and class body invocations.
+2. Clone `SuperModule` and store in it the passed in `super_module_body` block
+3. Assign the cloned `SuperModule` to a new constant as defined by name (e.g. 'Utilities::Printer') under a class, module, or the top-level Ruby scope
+4. When calling `include` on the module later on, its stored super_module_body attribute is retrieved and run in the including class or module body via `class_eval`
 
 ## Limitations and Caveats
 
- * [SuperModule](https://rubygems.org/gems/super_module) has been designed to be used only in the code definition of a module, not to be mixed in at run-time.
-
- * Initial Ruby runtime load of a class or module mixing in [SuperModule](https://rubygems.org/gems/super_module) will incur a very marginal performance hit (in the order of nano-to-milliseconds). However, class usage (instantiation and method invocation) will not incur any performance hit, running as fast as any other Ruby class.
+ * [SuperModule](https://rubygems.org/gems/super_module) has been designed to be used only in the initial code definition of a module (not supporting later re-opening of the module.)
 
  * Given [SuperModule](https://rubygems.org/gems/super_module)'s implementation relies on `self.included(base)`, if an including super module (or a super module including another super module) must hook into <code>self.included(base)</code> for meta-programming cases that require it, such as conditional `include` statements or method definitions, it would have to alias <code>self.included(base)</code> and then invoke the aliased version in every super module that needs it like in this example: 
 ```ruby 
-module AdminIdentifiable
-    include SuperModule
+super_module AdminIdentifiable do
     include UserIdentifiable
     
     class << self
@@ -345,10 +278,18 @@ module AdminIdentifiable
             # or conditional definition of methods
         end
     end
+end
 ```
 In the future, [SuperModule](https://rubygems.org/gems/super_module) could perhaps provide robust built-in facilities for allowing super modules to easily hook into <code>self.included(base)</code> without interfering with [SuperModule](https://rubygems.org/gems/super_module) behavior.
 
 ## What's New?
+
+### v2.0.0
+
+* New `super_module(name)` syntax
+* Much simpler implementation with guaranteed correctness and no performance hit
+* Less memory footprint by not requiring method_source Ruby gem for v2 syntax
+* Backwards compatibility with v1 syntax
 
 ### v1.1.1
 
