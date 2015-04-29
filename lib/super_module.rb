@@ -10,6 +10,7 @@
 
 module SuperModule
   class << self
+    V1_LIBRARY = File.expand_path(File.join(File.dirname(__FILE__), 'super_module', 'v1'))
   
     attr_accessor :super_module_body
 
@@ -21,7 +22,7 @@ module SuperModule
       if super_module_body
         original_base.class_eval(&super_module_body)
       else
-        require File.expand_path(File.join(File.dirname(__FILE__), 'super_module', 'v1'))
+        require V1_LIBRARY
         original_base.send(:include, SuperModule::V1)
       end
     end
