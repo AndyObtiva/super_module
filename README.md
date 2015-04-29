@@ -8,7 +8,7 @@ Calling [Ruby](https://www.ruby-lang.org/en/)'s [`Module#include`](http://ruby-d
 
 [`ActiveSupport::Concern`](http://api.rubyonrails.org/classes/ActiveSupport/Concern.html) is a popular Rails library that attempts to ease some of the boilerplate pain by offering a [DSL](http://www.infoq.com/news/2007/06/dsl-or-not) layer on top of [`Module.included(base)`](http://ruby-doc.org/core-2.2.1/Module.html#method-i-included). Unfortunately, while it improves the readability of the code needed to include class methods, it supports the same boilerplate idiom, thus feeling no more than putting a band-aid on the problem.
 
-Fortunately, [SuperModule](https://rubygems.org/gems/super_module) comes to the rescue. Including `SuperModule` at the top of a Ruby module's body automatically ensures inclusion of class methods whenever a developer mixes it in via [`Module#include`](http://ruby-doc.org/core-2.2.1/Module.html#method-i-include).
+Fortunately, [SuperModule](https://rubygems.org/gems/super_module) comes to the rescue. By declaring your module as a `super_module`, it will automatically include class methods whenever it is mixed into a class or another module via [`Module#include`](http://ruby-doc.org/core-2.2.1/Module.html#method-i-include).
 
 ## Introductory Comparison
 
@@ -87,12 +87,20 @@ super_module :UserIdentifiable do
   end
 end
 ```
-
 Using `super_module`, developers can directly add class method invocations and definitions inside the module's body, and [`SuperModule`](https://github.com/AndyObtiva/super_module) takes care of automatically mixing them into classes that include the module.
 
 As a result, [SuperModule](https://rubygems.org/gems/super_module) collapses the difference between extending a super class and including a super module, thus encouraging developers to write simpler code while making better Object-Oriented Design decisions. 
 
 In other words, [SuperModule](https://rubygems.org/gems/super_module) furthers Ruby's goal of making programmers happy.
+
+By the way, SuperModule 2 supports an alternate syntax as well:
+
+```ruby
+UserIdentifiable = super_module do
+end
+```
+
+
 
 ## Instructions
 
