@@ -3,7 +3,8 @@ require 'spec_helper'
 describe SuperModule do
 
   ['V1',
-   'V2'
+   'V2',
+   'V2Alt'
   ].each do |version|
     Object.send(:remove_const, :SupportVersion) rescue nil
     SupportVersion = Support.const_get(version)

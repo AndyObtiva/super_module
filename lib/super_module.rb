@@ -42,10 +42,14 @@ module SuperModule
   
 end
 
-def super_module(name, &super_module_body)
+def super_module(name=nil, &super_module_body)
   initial_ancestor = self.class == Object ? Object : self
-  parent = SuperModule.__super_module_parent(name, initial_ancestor)
-  module_name = name.to_s.split('::').last
-  parent.const_set(module_name, SuperModule.define(&super_module_body))
+  SuperModule.define(&super_module_body).tap do |new_super_module|
+    if name
+      parent = SuperModule.__super_module_parent(name, initial_ancestor)
+      module_name = name.to_s.split('::').last
+      parent.const_set(module_name, new_super_module)
+    end
+  end
 end
 
