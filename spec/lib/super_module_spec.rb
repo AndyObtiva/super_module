@@ -16,16 +16,28 @@ describe SuperModule do
 
     Object.send(:remove_const, :FooActiveRecord) rescue nil
     class FooActiveRecord < FakeActiveRecord
+      def foo
+        "FooActiveRecord.#{super()}"
+      end
+
       include SupportVersion::Foo
     end
 
     Object.send(:remove_const, :BarActiveRecord) rescue nil
     class BarActiveRecord < FakeActiveRecord
+      def foo
+        "BarActiveRecord.#{super()}"
+      end
+
       include SupportVersion::Bar
     end
 
     Object.send(:remove_const, :BazActiveRecord) rescue nil
     class BazActiveRecord < FakeActiveRecord
+      def foo
+        "BazActiveRecord.#{super()}"
+      end
+
       include SupportVersion::Baz
     end
     
@@ -110,10 +122,10 @@ describe SuperModule do
           expect(subject.empty_one_line_definition_with_spaces).to eq(nil)
         end
 
-        it 'includes instance methods' do
+        it 'includes instance methods (with inheritance working)' do
           instance = subject.new
 
-          expect(instance.foo).to eq('foo')
+          expect(instance.foo).to eq('FooActiveRecord.foo')
         end
 
         it 'provides class method self as the including base class as in the class method (meh)' do
@@ -135,10 +147,10 @@ describe SuperModule do
           expect(subject.bar).to eq('self.bar')
         end
 
-        it 'includes instance methods' do
+        it 'includes instance methods (with inheritance working)' do
           instance = subject.new
 
-          expect(instance.foo).to eq('foo')
+          expect(instance.foo).to eq('BarActiveRecord.foo')
           expect(instance.bar).to eq('bar')
         end
 
@@ -182,10 +194,10 @@ describe SuperModule do
           expect(subject.baz).to eq('self.baz')
         end
 
-        it 'includes instance methods' do
+        it 'includes instance methods (with inheritance working)' do
           instance = BazActiveRecord.new(100)
 
-          expect(instance.foo).to eq('foo')
+          expect(instance.foo).to eq('BazActiveRecord.foo')
           expect(instance.bar).to eq('bar')
           expect(instance.baz).to eq('baz')
         end
