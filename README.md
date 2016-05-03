@@ -1,4 +1,4 @@
-# <img src="https://raw.githubusercontent.com/AndyObtiva/super_module/master/SuperModule.jpg" alt="SuperModule" align="left" height="50" /> &nbsp; SuperModule 2
+# <img src="https://raw.githubusercontent.com/AndyObtiva/super_module/master/SuperModule.jpg" alt="SuperModule" align="left" height="50" /> &nbsp; SuperModule 2 Beta (1.2.0)
 [![Gem Version](https://badge.fury.io/rb/super_module.svg)](http://badge.fury.io/rb/super_module)
 [![Build Status](https://api.travis-ci.org/AndyObtiva/super_module.svg?branch=master)](https://travis-ci.org/AndyObtiva/super_module)
 [![Coverage Status](https://coveralls.io/repos/AndyObtiva/super_module/badge.svg?branch=master)](https://coveralls.io/r/AndyObtiva/super_module?branch=master)
@@ -89,11 +89,11 @@ end
 ```
 Using `super_module`, developers can directly add class method invocations and definitions inside the module's body, and [`SuperModule`](https://github.com/AndyObtiva/super_module) takes care of automatically mixing them into classes that include the module.
 
-As a result, [SuperModule](https://rubygems.org/gems/super_module) collapses the difference between extending a super class and including a super module, thus encouraging developers to write simpler code while making better Object-Oriented Design decisions. 
+As a result, [SuperModule](https://rubygems.org/gems/super_module) collapses the difference between extending a super class and including a super module, thus encouraging developers to write simpler code while making better Object-Oriented Design decisions.
 
 In other words, [SuperModule](https://rubygems.org/gems/super_module) furthers Ruby's goal of making programmers happy.
 
-By the way, SuperModule 2 supports an alternate syntax as well:
+By the way, SuperModule 2 Beta supports an alternate syntax as well:
 
 ```ruby
 UserIdentifiable = super_module do
@@ -290,7 +290,7 @@ In the future, [SuperModule](https://rubygems.org/gems/super_module) could perha
 
 ## What's New?
 
-### v2.0.0
+### v2 Beta (v1.2.0)
 
 * New `super_module(name)` syntax
 * Much simpler implementation with guaranteed correctness and no performance hit
@@ -325,5 +325,5 @@ The library is quite new and can use all the feedback and help it can get. So, p
 
 ## Copyright
 
-Copyright (c) 2014-2015 Andy Maleh. See LICENSE.txt for
+Copyright (c) 2014-2016 Andy Maleh. See LICENSE.txt for
 further details.

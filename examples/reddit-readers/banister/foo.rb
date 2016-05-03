@@ -1,7 +1,6 @@
 require_relative '../../../lib/super_module'
 
-module Foo
-  include SuperModule
+super_module :Foo
   def self.hello
     self
   end

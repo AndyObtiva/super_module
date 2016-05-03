@@ -6,12 +6,12 @@
 
 Gem::Specification.new do |s|
   s.name = "super_module"
-  s.version = "1.1.1"
+  s.version = "1.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib"]
   s.authors = ["Andy Maleh"]
-  s.date = "2015-04-09"
+  s.date = "2016-05-02"
   s.description = "SuperModule allows defining class methods and method invocations the same way a super class does without using def included(base). This also succeeds ActiveSupport::Concern by offering lighter syntax"
   s.extra_rdoc_files = [
     "LICENSE.txt",
@@ -26,8 +26,9 @@ Gem::Specification.new do |s|
     "examples/reddit-readers/banister/foo.rb",
     "examples/reddit-readers/banister/world.rb",
     "lib/super_module.rb",
-    "lib/super_module/module_body_method_call_recorder.rb",
-    "lib/super_module/singleton_method_definition_store.rb",
+    "lib/super_module/v1.rb",
+    "lib/super_module/v1/module_body_method_call_recorder.rb",
+    "lib/super_module/v1/singleton_method_definition_store.rb",
     "ruby187.Gemfile",
     "spec/lib/super_module_spec.rb",
     "spec/support/bar.rb",
