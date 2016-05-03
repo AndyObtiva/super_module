@@ -3,12 +3,12 @@ rvm:
   - 2.2.1
   - 2.1.5
   - 2.0.0
-  - 1.9.3
-  - 1.8.7
-  - ree
+  # - 1.9.3
+  # - 1.8.7
+  # - ree
   - jruby-18mode
-  - jruby-19mode
-  - rbx-2.5.2
+  # - jruby-19mode
+  # - rbx-2.5.2
 gemfile:
   - Gemfile
   - ruby187.Gemfile
@@ -20,18 +20,18 @@ matrix:
       gemfile: ruby187.Gemfile
     - rvm: 2.0.0
       gemfile: ruby187.Gemfile
-    - rvm: 1.9.3
-      gemfile: ruby187.Gemfile
-    - rvm: 1.8.7
-      gemfile: Gemfile
-    - rvm: ree
-      gemfile: Gemfile
+    # - rvm: 1.9.3
+    #   gemfile: ruby187.Gemfile
+    # - rvm: 1.8.7
+    #   gemfile: Gemfile
+    # - rvm: ree
+    #   gemfile: Gemfile
     - rvm: jruby-18mode
       gemfile: Gemfile
-    - rvm: jruby-19mode
-      gemfile: ruby187.Gemfile
-    - rvm: rbx-2.5.2
-      gemfile: ruby187.Gemfile
+    # - rvm: jruby-19mode
+    #   gemfile: ruby187.Gemfile
+    # - rvm: rbx-2.5.2
+    #   gemfile: ruby187.Gemfile
 addons:
   code_climate:
     repo_token: 0e64c46d3240d588d5bf60ac103b36c03ce382a879612b914404fa973f309d97
