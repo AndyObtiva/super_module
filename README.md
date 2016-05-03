@@ -21,8 +21,8 @@ To introduce [SuperModule](https://rubygems.org/gems/super_module), here is a co
 module UserIdentifiable
   include ActiveModel::Model
 
-  def self.included(base_klass)
-    base_klass.extend(ClassMethods)
+  def self.included(base)
+    base.extend(ClassMethods)
     base.class_eval do
       belongs_to :user
       validates :user_id, presence: true
