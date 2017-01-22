@@ -13,7 +13,7 @@ Fortunately, [SuperModule](https://rubygems.org/gems/super_module) comes to the 
 ## Introductory Comparison
 
 To introduce [SuperModule](https://rubygems.org/gems/super_module), here is a comparison of three different approaches for writing a
-<code>UserIdentifiable</code> module. 
+<code>UserIdentifiable</code> module, which includes ActiveModel::Model module as an in-memory alternative to ActiveRecord::Base superclass (Side-note: ActiveModel::Model is not needed when extending ActiveRecord::Base to connect to database.)
 
 #### 1) [self.included(base)](http://ruby-doc.org/core-2.2.1/Module.html#method-i-included)
 
