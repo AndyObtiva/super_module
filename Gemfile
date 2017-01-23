@@ -14,5 +14,7 @@ group :test do
   gem "rake", "< 11.0"
   gem "rack", "< 2.0"
   gem "nokogiri", "< 1.7.0"
+  gem "tins", "< 1.9.0"
+  gem "term-ansicolor", "< 1.4.0"
 end
 
