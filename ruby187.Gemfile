@@ -7,7 +7,7 @@ group :development do
   gem "rdoc", "~> 4.2.0"
   gem "rspec", "~> 3.2.0"
 
-  # Ruby 1.8.7 support older gems
+  # Ruby 1.8.7 requires some older gems
   gem "mime-types", "~> 1.25.1"
   gem "netrc", "~> 0.9.0"
   gem "rest-client", "~> 1.6.0"
