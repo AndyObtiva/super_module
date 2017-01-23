@@ -10,6 +10,7 @@ end
 
 group :test do
   gem "coveralls", "~> 0.7.11", :require => false
-  gem "codeclimate-test-reporter", :require => nil
+  gem "codeclimate-test-reporter", "~> 0.4.7", :require => nil
+  gem "rake", "< 11.0"
 end
 
