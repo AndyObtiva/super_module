@@ -13,5 +13,6 @@ group :development do
   gem "rest-client", "~> 1.6.0"
   gem "nokogiri", "~> 1.5.0"
   gem "highline", "~> 1.6.21"
+  gem "rake", "< 11.0"
 end
 
