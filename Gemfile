@@ -13,5 +13,6 @@ group :test do
   gem "codeclimate-test-reporter", "~> 0.4.7", :require => nil
   gem "rake", "< 11.0"
   gem "rack", "< 2.0"
+  gem "nokogiri", "< 1.7.0"
 end
 
