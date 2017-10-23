@@ -3,7 +3,7 @@ source "http://rubygems.org"
 gem "method_source", "~> 0.8.2", :require => false
 
 group :development do
-  gem "jeweler", "~> 2.0.1"
+  gem "jeweler", "~> 2.3.0"
   gem "rdoc", "~> 4.2.0"
   gem "rspec", "~> 3.2.0"
 

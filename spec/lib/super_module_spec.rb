@@ -28,8 +28,18 @@ describe SuperModule do
     class BazActiveRecord < FakeActiveRecord
       include SupportVersion::Baz
     end
-    
+
     context version do
+
+      context "standalone module usage" do
+        subject { Support::V2::FakeActiveModel }
+
+        it 'allows invoking class methods' do
+          subject.validates 'foo', {:presence => true}
+          expect(subject.validations).to include(['foo', {:presence => true}])
+        end
+
+      end
 
       context "included by a module (Foo) that is included by a class (FooActiveRecord)" do
 

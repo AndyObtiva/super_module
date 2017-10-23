@@ -50,7 +50,8 @@ def super_module(name=nil, &super_module_body)
       parent = SuperModule.__super_module_parent(name, initial_ancestor)
       module_name = name.to_s.split('::').last
       parent.const_set(module_name, new_super_module)
+      super_module_body = new_super_module.super_module_body
+      new_super_module.class_eval(&super_module_body)
     end
   end
 end
-
