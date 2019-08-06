@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0".freeze) if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib".freeze]
   s.authors = ["Andy Maleh".freeze]
-  s.date = "2017-10-23"
+  s.date = "2019-08-06"
   s.description = "SuperModule allows defining class methods and method invocations the same way a super class does without using def included(base). This also succeeds ActiveSupport::Concern by offering lighter syntax".freeze
   s.extra_rdoc_files = [
     "LICENSE.txt",
@@ -61,7 +61,7 @@ Gem::Specification.new do |s|
     s.specification_version = 4
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<method_source>.freeze, ["~> 0.8.2"])
+      s.add_runtime_dependency(%q<method_source>.freeze, [">= 0.8.2"])
       s.add_development_dependency(%q<jeweler>.freeze, ["~> 2.3.0"])
       s.add_development_dependency(%q<rdoc>.freeze, ["~> 4.2.0"])
       s.add_development_dependency(%q<rspec>.freeze, ["~> 3.2.0"])
@@ -71,7 +71,7 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<tins>.freeze, ["~> 1.6.0"])
       s.add_development_dependency(%q<term-ansicolor>.freeze, ["~> 1.3.2"])
     else
-      s.add_dependency(%q<method_source>.freeze, ["~> 0.8.2"])
+      s.add_dependency(%q<method_source>.freeze, [">= 0.8.2"])
       s.add_dependency(%q<jeweler>.freeze, ["~> 2.3.0"])
       s.add_dependency(%q<rdoc>.freeze, ["~> 4.2.0"])
       s.add_dependency(%q<rspec>.freeze, ["~> 3.2.0"])
@@ -82,7 +82,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<term-ansicolor>.freeze, ["~> 1.3.2"])
     end
   else
-    s.add_dependency(%q<method_source>.freeze, ["~> 0.8.2"])
+    s.add_dependency(%q<method_source>.freeze, [">= 0.8.2"])
     s.add_dependency(%q<jeweler>.freeze, ["~> 2.3.0"])
     s.add_dependency(%q<rdoc>.freeze, ["~> 4.2.0"])
     s.add_dependency(%q<rspec>.freeze, ["~> 3.2.0"])
