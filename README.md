@@ -1,11 +1,11 @@
-# <img src="https://raw.githubusercontent.com/AndyObtiva/super_module/master/SuperModule.jpg" alt="SuperModule" align="left" height="50" /> &nbsp; SuperModule 2 Beta (1.2.1)
+# <img src="https://raw.githubusercontent.com/AndyObtiva/super_module/master/SuperModule.jpg" alt="SuperModule" align="left" height="50" /> &nbsp; SuperModule 2 Beta
 [![Gem Version](https://badge.fury.io/rb/super_module.svg)](http://badge.fury.io/rb/super_module)
 [![Coverage Status](https://coveralls.io/repos/AndyObtiva/super_module/badge.svg?branch=master)](https://coveralls.io/r/AndyObtiva/super_module?branch=master)
 [![Code Climate](https://codeclimate.com/github/AndyObtiva/super_module.svg)](https://codeclimate.com/github/AndyObtiva/super_module)
 
-Calling [Ruby](https://www.ruby-lang.org/en/)'s [`Module#include`](http://ruby-doc.org/core-2.2.1/Module.html#method-i-include) to mix in a module does not bring in class methods by default. This can come as quite the surprise when attempting to include class methods via a module. 
+Calling [Ruby](https://www.ruby-lang.org/en/)'s [`Module#include`](http://ruby-doc.org/core-2.2.1/Module.html#method-i-include) to mix in a module does not bring in class methods by default. This can come as quite the surprise when attempting to include class methods via a module.
 
-Ruby offers one workaround in the form of implementing the hook method [`Module.included(base)`](http://ruby-doc.org/core-2.2.1/Module.html#method-i-included) [following a certain boilerplate code idiom](http://www.railstips.org/blog/archives/2009/05/15/include-vs-extend-in-ruby/). Unfortunately, it hinders code maintainability and productivity with extra unnecessary complexity, especially in production-environment projects employing many [mixins](http://en.wikipedia.org/wiki/Mixin) (e.g. modeling business domain models with composable object [traits](http://en.wikipedia.org/wiki/Trait_(computer_programming))). 
+Ruby offers one workaround in the form of implementing the hook method [`Module.included(base)`](http://ruby-doc.org/core-2.2.1/Module.html#method-i-included) [following a certain boilerplate code idiom](http://www.railstips.org/blog/archives/2009/05/15/include-vs-extend-in-ruby/). Unfortunately, it hinders code maintainability and productivity with extra unnecessary complexity, especially in production-environment projects employing many [mixins](http://en.wikipedia.org/wiki/Mixin) (e.g. modeling business domain models with composable object [traits](http://en.wikipedia.org/wiki/Trait_(computer_programming))).
 
 Another workaround is [`ActiveSupport::Concern`](http://api.rubyonrails.org/classes/ActiveSupport/Concern.html), a Rails library that attempts to ease some of the boilerplate pain by offering a [DSL](http://www.infoq.com/news/2007/06/dsl-or-not) layer on top of [`Module.included(base)`](http://ruby-doc.org/core-2.2.1/Module.html#method-i-included). Unfortunately, while it helps improve readability a bit, it adds even more boilerplate idiom cruft, thus feeling no more than putting a band-aid on the problem.
 
@@ -29,13 +29,13 @@ module UserIdentifiable
       validates :user_id, presence: true
     end
   end
-  
+
   module ClassMethods
     def most_active_user
       User.find_by_id(select('count(id) as head_count, user_id').group('user_id').order('count(id) desc').first.user_id)
     end
   end
-  
+
   def slug
     "#{self.class.name}_#{user_id}"
   end
@@ -55,13 +55,13 @@ module UserIdentifiable
     belongs_to :user
     validates :user_id, presence: true
   end
-  
+
   module ClassMethods
     def most_active_user
       User.find_by_id(select('count(id) as head_count, user_id').group('user_id').order('count(id) desc').first.user_id)
     end
   end
-  
+
   def slug
     "#{self.class.name}_#{user_id}"
   end
@@ -75,7 +75,7 @@ A step forward that addresses the boiler-plate repetitive code concern, but is o
 ```ruby
 super_module :UserIdentifiable do
   include ActiveModel::Model
-  
+
   belongs_to :user
   validates :user_id, presence: true
 
@@ -109,7 +109,7 @@ end
 
 <b>Using [Bundler](http://bundler.io/)</b>
 
-Add the following to Gemfile: <pre>gem 'super_module', '1.0.0'</pre>
+Add the following to Gemfile: <pre>gem 'super_module', '1.2.2'</pre>
 
 And run the following command: <pre>bundle</pre>
 
@@ -203,7 +203,7 @@ super_module :RequiresAttributes do
   def self.required_attributes
     @required_attributes ||= []
   end
-  
+
   def requirements_satisfied?
     !!self.class.required_attributes.reduce(true) { |result, required_attribute| result && send(required_attribute) }
   end
@@ -271,16 +271,16 @@ V2 has a much simpler algorithm than V1 that goes as follows:
 
  * [SuperModule](https://rubygems.org/gems/super_module) has been designed to be used only in the initial code definition of a module (not supporting later re-opening of the module.)
 
- * Given [SuperModule](https://rubygems.org/gems/super_module)'s implementation relies on `self.included(base)`, if an including super module (or a super module including another super module) must hook into <code>self.included(base)</code> for meta-programming cases that require it, such as conditional `include` statements or method definitions, it would have to alias <code>self.included(base)</code> and then invoke the aliased version in every super module that needs it like in this example: 
-```ruby 
+ * Given [SuperModule](https://rubygems.org/gems/super_module)'s implementation relies on `self.included(base)`, if an including super module (or a super module including another super module) must hook into <code>self.included(base)</code> for meta-programming cases that require it, such as conditional `include` statements or method definitions, it would have to alias <code>self.included(base)</code> and then invoke the aliased version in every super module that needs it like in this example:
+```ruby
 super_module :AdminIdentifiable do
     include UserIdentifiable
-    
+
     class << self
         alias included_super_module included
         def included(base)
             included_super_module(base)
-            # do some extra work 
+            # do some extra work
             # like conditional inclusion of other modules
             # or conditional definition of methods
         end
@@ -290,6 +290,10 @@ end
 In the future, [SuperModule](https://rubygems.org/gems/super_module) could perhaps provide robust built-in facilities for allowing super modules to easily hook into <code>self.included(base)</code> without interfering with [SuperModule](https://rubygems.org/gems/super_module) behavior.
 
 ## What's New?
+
+### v2 Beta (v1.2.2)
+
+* Relaxed dependency on `method_source` gem version
 
 ### v2 Beta (v1.2.1)
 
@@ -315,11 +319,11 @@ In the future, [SuperModule](https://rubygems.org/gems/super_module) could perha
  * New dependency on [Banister](https://github.com/banister)'s [method_source](https://github.com/banister/method_source) library to have the self-friendly algorithm eval inherited class method sources into the including base class or module.
  * Refactorings, including break-up of the original SuperModule into 3 modules in separate files
  * More RSpec test coverage, including additional method definition scenarios, such as when adding dynamically via `class_eval` and `define_method`
- 
+
 ## Feedback and Contribution
 
 [SuperModule](https://rubygems.org/gems/super_module) is written in a very clean and maintainable test-first approach, so you are welcome to read through the code on GitHub for more in-depth details:
-https://github.com/AndyObtiva/super_module 
+https://github.com/AndyObtiva/super_module
 
 The library is quite new and can use all the feedback and help it can get. So, please do not hesitate to add comments if you have any, and please fork [the project on GitHub](https://github.com/AndyObtiva/super_module#fork-destination-box) in order to [make contributions via Pull Requests](https://github.com/AndyObtiva/super_module/pulls).
 
