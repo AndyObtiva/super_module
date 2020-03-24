@@ -332,6 +332,11 @@ The library is quite new and can use all the feedback and help it can get. So, p
  * 2015-03-27 - [AirPair](http://www.airpair.com) Article: [Step aside ActiveSupport::Concern. SuperModule is the new sheriff in town!](https://www.airpair.com/ruby/posts/step-aside-activesupportconcern-supermodule-is-the-new-sheriff-in-town)
  * 2014-03-27 - [Code Painter](http://andymaleh.blogspot.com) Blog Post: [Ruby SuperModule Comes To The Rescue!!](http://andymaleh.blogspot.ca/2014/03/ruby-supermodule-comes-to-rescue.html)
 
+## TODO
+
+- Fix issue where class methods cannot get called from super_module directly (when used with "CONSTANT = super_module do" approach)
+- Fix issue where a super module (declared with super_module) can get included in one class only where class methods work, but the next class that includes the super module does not have class methods work
+
 ## Copyright
 
 Copyright (c) 2014-2016 Andy Maleh. See LICENSE.txt for

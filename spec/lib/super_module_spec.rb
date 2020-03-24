@@ -6,28 +6,27 @@ describe SuperModule do
    'V2',
    'V2Alt'
   ].each do |version|
-    Object.send(:remove_const, :SupportVersion) rescue nil
-    SupportVersion = Support.const_get(version)
-    
+    support_version = Support.const_get(version)
+
     Object.send(:remove_const, :FakeActiveRecord) rescue nil
     class FakeActiveRecord
-      include SupportVersion::FakeActiveModel
     end
+    FakeActiveRecord.include support_version::FakeActiveModel
 
     Object.send(:remove_const, :FooActiveRecord) rescue nil
     class FooActiveRecord < FakeActiveRecord
-      include SupportVersion::Foo
     end
+    FooActiveRecord.include support_version::Foo
 
     Object.send(:remove_const, :BarActiveRecord) rescue nil
     class BarActiveRecord < FakeActiveRecord
-      include SupportVersion::Bar
     end
+    BarActiveRecord.include support_version::Bar
 
     Object.send(:remove_const, :BazActiveRecord) rescue nil
     class BazActiveRecord < FakeActiveRecord
-      include SupportVersion::Baz
     end
+    BazActiveRecord.include support_version::Baz
 
     context version do
 
@@ -152,7 +151,7 @@ describe SuperModule do
           expect(instance.bar).to eq('bar')
         end
 
-        it 'can include a basic module (Forwardable) into singleton class by placing in class << self' do 
+        it 'can include a basic module (Forwardable) into singleton class by placing in class << self' do
           instance = subject.new
           expect(instance.length).to eq(3)
         end
@@ -161,7 +160,7 @@ describe SuperModule do
           expect(subject.barrable).to eq(true)
         end
 
-        it 'can include a basic module (Comparable)' do 
+        it 'can include a basic module (Comparable)' do
           now = Time.now
           allow(Time).to receive(:now).and_return(now)
           instance = subject.new
@@ -204,7 +203,7 @@ describe SuperModule do
           expect(subject.barrable).to eq(true)
         end
 
-        it 'can override super module behavior (<=>)' do 
+        it 'can override super module behavior (<=>)' do
           instance = subject.new(50)
           instance2 = subject.new(7)
 
