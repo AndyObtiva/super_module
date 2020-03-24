@@ -293,7 +293,7 @@ Avoid hooking into `self.included(base)` at all costs.
 
 ## Change Log
 
-[CHANGELOG.md](https://raw.githubusercontent.com/AndyObtiva/super_module/master/CHANGELOG.md)
+[CHANGELOG.md](https://github.com/AndyObtiva/super_module/blob/master/CHANGELOG.md)
 
 ## Feedback and Contribution
 
