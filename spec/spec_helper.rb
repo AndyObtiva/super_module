@@ -22,5 +22,3 @@ end
 require 'puts_debuggerer'
 require File.join(File.dirname(__FILE__), '..', 'lib', 'super_module')
 require File.join(File.dirname(__FILE__), 'support', 'v1')
-require File.join(File.dirname(__FILE__), 'support', 'v2')
-require File.join(File.dirname(__FILE__), 'support', 'v2_alt')

@@ -1,4 +1,4 @@
-# <img src="https://raw.githubusercontent.com/AndyObtiva/super_module/master/SuperModule.jpg" alt="SuperModule" align="left" height="50" /> &nbsp; SuperModule 2 Beta
+# <img src="https://raw.githubusercontent.com/AndyObtiva/super_module/master/SuperModule.jpg" alt="SuperModule" align="left" height="50" /> &nbsp; SuperModule 1.3
 [![Gem Version](https://badge.fury.io/rb/super_module.svg)](http://badge.fury.io/rb/super_module)
 [![Coverage Status](https://coveralls.io/repos/AndyObtiva/super_module/badge.svg?branch=master)](https://coveralls.io/r/AndyObtiva/super_module?branch=master)
 [![Code Climate](https://codeclimate.com/github/AndyObtiva/super_module.svg)](https://codeclimate.com/github/AndyObtiva/super_module)
@@ -9,7 +9,7 @@ Ruby offers one workaround in the form of implementing the hook method [`Module.
 
 Another workaround is [`ActiveSupport::Concern`](http://api.rubyonrails.org/classes/ActiveSupport/Concern.html), a Rails library that attempts to ease some of the boilerplate pain by offering a [DSL](http://www.infoq.com/news/2007/06/dsl-or-not) layer on top of [`Module.included(base)`](http://ruby-doc.org/core-2.2.1/Module.html#method-i-included). Unfortunately, while it helps improve readability a bit, it adds even more boilerplate idiom cruft, thus feeling no more than putting a band-aid on the problem.
 
-But do not fear, [SuperModule](https://rubygems.org/gems/super_module) comes to the rescue! By declaring your module as a `super_module`, it will simply behave as one would expect and automatically include class methods along with instance methods, without any further work needed.
+But do not fear, [SuperModule](https://rubygems.org/gems/super_module) comes to the rescue! By declaring your module as a SuperModule, it will simply behave as one would expect and automatically include class methods along with instance methods, without any further work needed.
 
 ## Introductory Comparison
 
@@ -73,7 +73,8 @@ A step forward that addresses the boiler-plate repetitive code concern, but is o
 #### 3) [SuperModule](https://github.com/AndyObtiva/super_module)
 
 ```ruby
-super_module :UserIdentifiable do
+module UserIdentifiable
+  include SuperModule
   include ActiveModel::Model
 
   belongs_to :user
@@ -88,20 +89,11 @@ super_module :UserIdentifiable do
   end
 end
 ```
-Using `super_module`, developers can directly add class method invocations and definitions inside the module's body, and [`SuperModule`](https://github.com/AndyObtiva/super_module) takes care of automatically mixing them into classes that include the module.
+By including `SuperModule` (following Ruby's basic convention of relying on a module), developers can directly add class method invocations and definitions inside the module's body, and [`SuperModule`](https://github.com/AndyObtiva/super_module) takes care of automatically mixing them into classes that include the module.
 
 As a result, [SuperModule](https://rubygems.org/gems/super_module) collapses the difference between extending a super class and including a super module, thus encouraging developers to write simpler code while making better Object-Oriented Design decisions.
 
 In other words, [SuperModule](https://rubygems.org/gems/super_module) furthers Ruby's goal of making programmers happy.
-
-By the way, SuperModule 2 Beta supports an alternate syntax as well:
-
-```ruby
-UserIdentifiable = super_module do
-end
-```
-
-
 
 ## Instructions
 
@@ -109,7 +101,7 @@ end
 
 <b>Using [Bundler](http://bundler.io/)</b>
 
-Add the following to Gemfile: <pre>gem 'super_module', '1.2.2'</pre>
+Add the following to Gemfile: <pre>gem 'super_module', '1.3.0'</pre>
 
 And run the following command: <pre>bundle</pre>
 
@@ -123,10 +115,11 @@ Run the following command: <pre>gem install super_module</pre>
 
 Add the following at the top of your [Ruby](https://www.ruby-lang.org/en/) file: <pre>require 'super_module'</pre>
 
-#### 2) Call `super_module(name)` and pass it the super module body in a block
+#### 2) Simply include SuperModule in your module (just like you would do any other Ruby module)
 
 ```ruby
-super_module :UserIdentifiable do
+module UserIdentifiable
+  include SuperModule
   include ActiveModel::Model
 
   belongs_to :user
@@ -151,7 +144,8 @@ end
 class CourseEnrollment < ActiveRecord::Base
   include UserIdentifiable
 end
-super_module :Accountable do
+module Accountable
+  include SuperModule
   include UserIdentifiable
 end
 class Activity < ActiveRecord::Base
@@ -194,7 +188,8 @@ Create a ruby file called super_module_irb_example.rb with the following content
 require 'rubygems' # to be backwards compatible with Ruby 1.8.7
 require 'super_module'
 
-super_module :RequiresAttributes do
+module RequiresAttributes
+  include SuperModule
 
   def self.requires(*attributes)
     attributes.each {|attribute| required_attributes << attribute}
@@ -267,58 +262,35 @@ V2 has a much simpler algorithm than V1 that goes as follows:
 3. Assign the cloned `SuperModule` to a new constant as defined by name (e.g. 'Utilities::Printer') under a class, module, or the top-level Ruby scope
 4. When calling `include` on the module later on, its stored super_module_body attribute is retrieved and run in the including class or module body via `class_eval`
 
-## Limitations and Caveats
+## Warnings
 
- * [SuperModule](https://rubygems.org/gems/super_module) has been designed to be used only in the initial code definition of a module (not supporting later re-opening of the module.)
+1) [SuperModule](https://rubygems.org/gems/super_module) by definition has been designed to be used only in the initial code declaration of a module, not later mixing or re-opening of a module.
 
- * Given [SuperModule](https://rubygems.org/gems/super_module)'s implementation relies on `self.included(base)`, if an including super module (or a super module including another super module) must hook into <code>self.included(base)</code> for meta-programming cases that require it, such as conditional `include` statements or method definitions, it would have to alias <code>self.included(base)</code> and then invoke the aliased version in every super module that needs it like in this example:
+2) Given [SuperModule](https://rubygems.org/gems/super_module)'s implementation relies on `self.included(base)`, sub-modules must not hook into it.
+
+In very rare occasions when an including module needs to redefine <code>self.included(base)</code> for meta-programming purposes, you may do so at your own peril by first invoking <code>self.included_super_module(base)</code> like in this example:
 ```ruby
-super_module :AdminIdentifiable do
+module AdminIdentifiable
+    include SuperModule
     include UserIdentifiable
 
     class << self
-        alias included_super_module included
         def included(base)
             included_super_module(base)
-            # do some extra work
+            # do some extra rare meta-programming work
             # like conditional inclusion of other modules
             # or conditional definition of methods
         end
     end
 end
 ```
-In the future, [SuperModule](https://rubygems.org/gems/super_module) could perhaps provide robust built-in facilities for allowing super modules to easily hook into <code>self.included(base)</code> without interfering with [SuperModule](https://rubygems.org/gems/super_module) behavior.
+This does not work for all cases (like multiple levels of super module nesting), and is not recommended, likely causing problems.
 
-## What's New?
+Avoid hooking into `self.included(base)` at all costs.
 
-### v2 Beta (v1.2.2)
+## Change Log
 
-* Relaxed dependency on `method_source` gem version
-
-### v2 Beta (v1.2.1)
-
-* Standalone super module usage (e.g. direct class method invocation)
-
-### v2 Beta (v1.2.0)
-
-* New `super_module(name)` syntax
-* Much simpler implementation with guaranteed correctness and no performance hit
-* Less memory footprint by not requiring method_source Ruby gem for v2 syntax
-* Backwards compatibility with v1 syntax
-
-### v1.1.1
-
-* Added support for private and protected methods
-* Added many more RSpec test cases, including testing of empty and comment containing singleton methods
-
-### v1.1.0
-
- * Brand new `self`-friendly algorithm that ensures true mixing of super module singleton methods into the including base class or module, thus always returning the actual base class or module `self` when invoking a super module inherited singleton method (thanks to [Banister](https://github.com/banister) for [reporting previous limitation on Reddit and providing suggestions](http://www.reddit.com/r/ruby/comments/30j66y/step_aside_activesupportconcern_supermodule_is/))
- * New `included_super_modules` inherited singleton method that provides developer with a list of all included super modules similar to the Ruby `included_modules` method.
- * No more use for method_missing (Thanks to Marc-André Lafortune for bringing up as a previous limitation in [AirPair article reviews](https://www.airpair.com/ruby/posts/step-aside-activesupportconcern-supermodule-is-the-new-sheriff-in-town))
- * New dependency on [Banister](https://github.com/banister)'s [method_source](https://github.com/banister/method_source) library to have the self-friendly algorithm eval inherited class method sources into the including base class or module.
- * Refactorings, including break-up of the original SuperModule into 3 modules in separate files
- * More RSpec test coverage, including additional method definition scenarios, such as when adding dynamically via `class_eval` and `define_method`
+[CHANGELOG.md](https://raw.githubusercontent.com/AndyObtiva/super_module/master/CHANGELOG.md)
 
 ## Feedback and Contribution
 

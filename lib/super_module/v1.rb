@@ -28,10 +28,10 @@ module SuperModule
               __define_super_module_singleton_methods(base)
               __invoke_module_body_method_calls(base)
             end
+            alias included_super_module included
           end
         end
       end
     end
   end
 end
-

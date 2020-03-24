@@ -26,7 +26,8 @@ module SuperModule
           :dbg_print, #debugger library friendly exclusion
           :dbg_puts, #debugger library friendly exclusion
           :define,
-          :included, 
+          :included,
+          :included_super_module,
           :included_super_modules,
           :singleton_method_added,
           :super_module_body
@@ -36,7 +37,7 @@ module SuperModule
       def __super_module_singleton_methods
         @__super_module_singleton_methods ||= []
       end
-      
+
       def __singleton_method_body_for(super_module, method_name)
         super_module.__super_module_singleton_methods.detect {|sm_method_name, sm_method_body| sm_method_name == method_name}[1]
       end
@@ -78,7 +79,7 @@ module SuperModule
 
       def __singleton_method_body(method_name)
           super_module_having_method = __super_module_having_method(method_name)
-          super_module_having_method ? __singleton_method_body_for(super_module_having_method, method_name) : __build_singleton_method_body_source(method_name) 
+          super_module_having_method ? __singleton_method_body_for(super_module_having_method, method_name) : __build_singleton_method_body_source(method_name)
       end
 
       def __overwrite_singleton_method_from_current_super_module(method_name, method_body)
@@ -91,7 +92,7 @@ module SuperModule
       def singleton_method_added(method_name)
         unless __super_module_singleton_methods_excluded_from_base_definition.include?(method_name)
           method_body = __singleton_method_body(method_name)
-          __super_module_singleton_methods << [method_name, method_body] 
+          __super_module_singleton_methods << [method_name, method_body]
           __overwrite_singleton_method_from_current_super_module(method_name, method_body)
         end
       end
