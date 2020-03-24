@@ -1,6 +1,6 @@
 require 'forwardable'
 
-module Support::V2Alt
+module V2Alt
   Bar = super_module do
     include Foo
     include Comparable

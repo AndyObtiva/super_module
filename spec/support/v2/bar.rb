@@ -1,6 +1,6 @@
 require 'forwardable'
 
-module Support::V2
+module V2
   super_module :Bar do
     include Foo
     include Comparable

@@ -1,15 +1,15 @@
-super_module 'Support::V2::Baz' do
-  include Support::V2::Bar
+super_module 'V2::Baz' do
+  include ::V2::Bar
   make_barrable
   validates 'baz', {:presence => true}
   attr_reader :baz_factor
-  
+
   class << self
     def baz
       'self.baz'
     end
   end
-  
+
   def initialize(baz_factor)
     super()
     @baz_factor = baz_factor
@@ -24,4 +24,3 @@ super_module 'Support::V2::Baz' do
   end
 
 end
-

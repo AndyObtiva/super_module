@@ -2,36 +2,34 @@ require 'spec_helper'
 
 describe SuperModule do
 
-  ['V1',
-   'V2',
-   'V2Alt'
-  ].each do |version|
-    support_version = Support.const_get(version)
-
+  [V1,
+   V2,
+   V2Alt
+ ].each do |version|
     Object.send(:remove_const, :FakeActiveRecord) rescue nil
     class FakeActiveRecord
     end
-    FakeActiveRecord.include support_version::FakeActiveModel
+    FakeActiveRecord.include version::FakeActiveModel
 
     Object.send(:remove_const, :FooActiveRecord) rescue nil
     class FooActiveRecord < FakeActiveRecord
     end
-    FooActiveRecord.include support_version::Foo
+    FooActiveRecord.include version::Foo
 
     Object.send(:remove_const, :BarActiveRecord) rescue nil
     class BarActiveRecord < FakeActiveRecord
     end
-    BarActiveRecord.include support_version::Bar
+    BarActiveRecord.include version::Bar
 
     Object.send(:remove_const, :BazActiveRecord) rescue nil
     class BazActiveRecord < FakeActiveRecord
     end
-    BazActiveRecord.include support_version::Baz
+    BazActiveRecord.include version::Baz
 
     context version do
 
       context "standalone module usage" do
-        subject { Support::V2::FakeActiveModel }
+        subject { V2::FakeActiveModel }
 
         it 'allows invoking class methods' do
           subject.validates 'foo', {:presence => true}

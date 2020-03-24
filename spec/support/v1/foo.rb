@@ -1,6 +1,6 @@
-module Support::V1::Foo
+module V1::Foo
   include SuperModule
-  include Support::V1::FakeActiveModel
+  include ::V1::FakeActiveModel
   validates 'foo', {:presence => true}
 
   class << self
@@ -20,11 +20,11 @@ module Support::V1::Foo
     end
     protected :foo_protected_declaration_follow_up
 
-    private 
+    private
     def foo_private
       'self.foo_private'
     end
-  
+
     protected
     def foo_protected
       'self.foo_protected'
@@ -84,4 +84,3 @@ module Support::V1::Foo
   end
 
 end
-
