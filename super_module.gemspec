@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
   ]
   s.files = [
     ".document",
+    "CHANGELOG.md",
     "LICENSE.txt",
     "README.md",
     "SuperModule.jpg",
@@ -28,7 +29,6 @@ Gem::Specification.new do |s|
     "lib/super_module/v1.rb",
     "lib/super_module/v1/module_body_method_call_recorder.rb",
     "lib/super_module/v1/singleton_method_definition_store.rb",
-    "ruby187.Gemfile",
     "spec/lib/super_module_spec.rb",
     "spec/support/v1.rb",
     "spec/support/v1/bar.rb",
@@ -39,7 +39,7 @@ Gem::Specification.new do |s|
   ]
   s.homepage = "http://github.com/AndyObtiva/super_module".freeze
   s.licenses = ["MIT".freeze]
-  s.rubygems_version = "3.0.6".freeze
+  s.rubygems_version = "3.0.8".freeze
   s.summary = "SuperModule allows defining class methods and method invocations the same way a super class does without using def included(base). This also succeeds ActiveSupport::Concern by offering lighter syntax".freeze
 
   if s.respond_to? :specification_version then
