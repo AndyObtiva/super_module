@@ -5,7 +5,7 @@
 - Dropped support for SuperModule 2 Beta syntax, reverting to V1 syntax as the default
 - Added `included_super_module` method to allow modules to call it if they need to redefine `self.included` for meta-programming.
 
-## 1.2.2
+## v2 Beta (v1.2.2)
 
 * Relaxed dependency on `method_source` gem version
 
