@@ -4,7 +4,8 @@ module V1::FakeActiveModel
 
   include SuperModule
 
-  def self.validates(attribute, options)
+  # Test default options specified
+  def self.validates(attribute, options = {})
     validations << [attribute, options]
   end
 
@@ -13,4 +14,3 @@ module V1::FakeActiveModel
   end
 
 end
-

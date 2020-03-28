@@ -31,12 +31,11 @@ module SuperModule
       def __singleton_method_call_recorder(method_name, method_args)
         unless __super_module_singleton_methods_excluded_from_call_recording.include?(method_name)
           method_call_recorder_args = "'#{method_name}'"
-          method_call_recorder_args << ", #{method_args}" unless method_args.to_s.strip == '' 
-          "self.__record_method_call(#{method_call_recorder_args})" 
+          method_call_recorder_args << ", #{method_args}" unless method_args.to_s.strip == ''
+          method_call_recorder_args = method_call_recorder_args.split(",").each_with_index.map {|arg, i| i == 0 ? arg : arg.split("=").first}.join(",")
+          "self.__record_method_call(#{method_call_recorder_args})"
         end
       end
     end
   end
 end
-   
-

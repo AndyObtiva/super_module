@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.3.1
+
+- Fixed issue with super module containing class methods with default arguments
+
 ## 1.3.0
 
 - Dropped support for SuperModule 2 Beta syntax, reverting to V1 syntax as the default
