@@ -314,5 +314,5 @@ The library is quite new and can use all the feedback and help it can get. So, p
 
 ## Copyright
 
-Copyright (c) 2014-2016 Andy Maleh. See LICENSE.txt for
+Copyright (c) 2014-2020 Andy Maleh. See LICENSE.txt for
 further details.
