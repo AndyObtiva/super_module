@@ -260,7 +260,7 @@ media_authorization.requirements_satisfied?
 
 1) [SuperModule](https://rubygems.org/gems/super_module) by definition has been designed to be used only in the initial code declaration of a module, not later mixing or re-opening of a module.
 
-2) Given [SuperModule](https://rubygems.org/gems/super_module)'s implementation relies on `self.included(base)`, sub-modules must not hook into it nor any other included modules.
+2) Given [SuperModule](https://rubygems.org/gems/super_module)'s implementation relies on `self.included(base)`, including modules must not hook into it, nor include any other (non-supermodule) modules that hook into it.
 
 In very rare occasions when an including module needs to redefine <code>self.included(base)</code> for meta-programming purposes, you may do so at your own peril by first invoking <code>self.included_super_module(base)</code> like in this example:
 ```ruby
