@@ -280,7 +280,7 @@ end
 ```
 This does not work for all cases (like multiple levels of super module nesting), and is not recommended, likely causing problems.
 
-Avoid hooking into `self.included(base)` at all costs.
+Avoid hooking into `self.included(base)`. You shouldn't need to anyways given `SuperModule` handles proper inclusion for you.
 
 ## Change Log
 
