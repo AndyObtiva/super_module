@@ -256,15 +256,6 @@ media_authorization.requirements_satisfied?
 ```
 => true
 
-## How Does It Work?
-
-V2 has a much simpler algorithm than V1 that goes as follows:
-
-1. Handle invocation of `super_module(name, &super_module_body)` method anywhere in the Ruby code where the block it receives represents the super module body, including instance methods, and class methods, and class body invocations.
-2. Clone `SuperModule` and store in it the passed in `super_module_body` block
-3. Assign the cloned `SuperModule` to a new constant as defined by name (e.g. 'Utilities::Printer') under a class, module, or the top-level Ruby scope
-4. When calling `include` on the module later on, its stored super_module_body attribute is retrieved and run in the including class or module body via `class_eval`
-
 ## Warnings
 
 1) [SuperModule](https://rubygems.org/gems/super_module) by definition has been designed to be used only in the initial code declaration of a module, not later mixing or re-opening of a module.
