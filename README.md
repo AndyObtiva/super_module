@@ -94,7 +94,7 @@ end
 ```
 By including `SuperModule` (following Ruby's basic convention of relying on a module), developers can directly add class method invocations and definitions inside the module's body, and [`SuperModule`](https://github.com/AndyObtiva/super_module) takes care of automatically mixing them into classes that include the module.
 
-As a result, [SuperModule](https://rubygems.org/gems/super_module) collapses the difference between extending a super class and including a super module, thus encouraging developers to write simpler code while making better Object-Oriented Design decisions.
+As a result, [SuperModule](https://rubygems.org/gems/super_module) collapses the difference between extending a super class and including a [super module](#glossary-and-definitions), thus encouraging developers to write simpler code while making better Object-Oriented Design decisions.
 
 In other words, [SuperModule](https://rubygems.org/gems/super_module) furthers Ruby's goal of making programmers happy.
 
@@ -104,7 +104,7 @@ In other words, [SuperModule](https://rubygems.org/gems/super_module) furthers R
 
 <b>Using [Bundler](http://bundler.io/)</b>
 
-Add the following to Gemfile: <pre>gem 'super_module', '1.3.1'</pre>
+Add the following to Gemfile: <pre>gem 'super_module', '1.4.0'</pre>
 
 And run the following command: <pre>bundle</pre>
 
@@ -118,7 +118,7 @@ Run the following command: <pre>gem install super_module</pre>
 
 Add the following at the top of your [Ruby](https://www.ruby-lang.org/en/) file: <pre>require 'super_module'</pre>
 
-#### 2) Simply include SuperModule in your module (just like you would do any other Ruby module)
+#### 2) Simply include SuperModule at the top of your module definition before anything else.
 
 ```ruby
 module UserIdentifiable
@@ -138,7 +138,9 @@ module UserIdentifiable
 end
 ```
 
-#### 3) Mix newly defined module into a class or another super module
+Note: Even if you are including another [super module](#glossary-and-definitions) in your new [super module](#glossary-and-definitions), you must `include SuperModule` at the top of your module definition before anything else.
+
+#### 3) Mix newly defined module into a class or another [super module](#glossary-and-definitions)
 
 ```ruby
 class ClubParticipation < ActiveRecord::Base
@@ -166,22 +168,21 @@ ClubParticipation.create(club_id: club.id, user_id: user.id).slug
 CourseEnrollment.new(course_id: course.id).valid?
 ```
 
+## Usage Notes
+
+ * SuperModule must always be included at the top of a module's body at [code-time](#glossary-and-definitions)
+ * SuperModule inclusion can be optionally followed by other basic or [super module](#glossary-and-definitions) inclusions
+ * A [super module](#glossary-and-definitions) can only be included in a class or another [super module](#glossary-and-definitions)
+
 ## Glossary and Definitions
 
- * SuperModule: name of the library and Ruby module that provides functionality via mixin
- * Super module: any Ruby module that mixes in SuperModule
- * Singleton class: also known as the [metaclass](https://rubymonk.com/learning/books/4-ruby-primer-ascent/chapters/39-ruby-s-object-model/lessons/131-singleton-methods-and-metaclasses) or [eigenclass](http://eigenjoy.com/2008/05/29/railsconf08-meta-programming-ruby-for-fun-and-profit/), it is the object-instance-associated class copy available to every object in Ruby (e.g. every `Object.new` instance has a singleton class that is a copy of the `Object` class, which can house instance-specific behavior if needed)
- * Singleton method: an instance method defined on an object's singleton class. Often used to refer to a class or module method defined on the [Ruby class object or module object singleton class](http://ruby-doc.com/docs/ProgrammingRuby/html/classes.html) via `def self.method_name(...)` or `class << self` enclosing `def method_name(...)`
- * Class method invocation: Inherited Ruby class or module method invoked in the body of a class or module (e.g. <code>validates :username, presence: true</code>)
- * Code-time: Time of writing code in a Ruby file as opposed to Run-time
- * Run-time: Time of executing Ruby code
-
-## Usage Details
-
- * SuperModule must always be included at the top of a module's body at code-time
- * SuperModule inclusion can be optionally followed by other basic or super module inclusions
- * A super module can only be included in a class or another super module
- * SuperModule adds <b>zero cost</b> to instantiation of including classes and invocation of included methods (both class and instance)
+* SuperModule: name of the library and Ruby module that provides functionality via mixin
+* Super module: any Ruby module that mixes in SuperModule
+* Singleton class: also known as the [metaclass](https://rubymonk.com/learning/books/4-ruby-primer-ascent/chapters/39-ruby-s-object-model/lessons/131-singleton-methods-and-metaclasses) or [eigenclass](http://eigenjoy.com/2008/05/29/railsconf08-meta-programming-ruby-for-fun-and-profit/), it is the object-instance-associated class copy available to every object in Ruby (e.g. every `Object.new` instance has a singleton class that is a copy of the `Object` class, which can house instance-specific behavior if needed)
+* Singleton method: an instance method defined on an object's singleton class. Often used to refer to a class or module method defined on the [Ruby class object or module object singleton class](http://ruby-doc.com/docs/ProgrammingRuby/html/classes.html) via `def self.method_name(...)` or `class << self` enclosing `def method_name(...)`
+* Class method invocation: Inherited Ruby class or module method invoked in the body of a class or module (e.g. <code>validates :username, presence: true</code>)
+* Code-time: Time of writing code in a Ruby file as opposed to Run-time
+* Run-time: Time of executing Ruby code
 
 ## IRB Example
 
@@ -192,25 +193,25 @@ require 'rubygems' # to be backwards compatible with Ruby 1.8.7
 require 'super_module'
 
 module RequiresAttributes
-  include SuperModule
+ include SuperModule
 
-  def self.requires(*attributes)
-    attributes.each {|attribute| required_attributes << attribute}
-  end
+ def self.requires(*attributes)
+   attributes.each {|attribute| required_attributes << attribute}
+ end
 
-  def self.required_attributes
-    @required_attributes ||= []
-  end
+ def self.required_attributes
+   @required_attributes ||= []
+ end
 
-  def requirements_satisfied?
-    !!self.class.required_attributes.reduce(true) { |result, required_attribute| result && send(required_attribute) }
-  end
+ def requirements_satisfied?
+   !!self.class.required_attributes.reduce(true) { |result, required_attribute| result && send(required_attribute) }
+ end
 end
 
 class MediaAuthorization
-  include RequiresAttributes
-  attr_accessor :user_id, :credit_card_id
-  requires :user_id, :credit_card_id
+ include RequiresAttributes
+ attr_accessor :user_id, :credit_card_id
+ requires :user_id, :credit_card_id
 end
 ```
 
@@ -256,31 +257,121 @@ media_authorization.requirements_satisfied?
 ```
 => true
 
+## Overriding `self.included(base)`
+
+With `SuperModule`, hooking into `self.included(base)` is no longer needed for most cases. Still, there rare exceptions where that might be needed to execute some meta-programmatic logic. Fortunately, `SuperModule` offers a mechanism to do so.
+
+`SuperModule` relies on `self.included(base)`, so modules mixing it in must refrain from implementing `self.included(base)` directly (`SuperModule` will automatically prevent that by providing instructions should one attempt to do so).
+
+In order for a [super module](#glossary-and-definitions) to hook into `self.included(base)` and add extra logic, it must do so via `super_module_included {|base| ... }` instead, which safely appends that logic to the work of `SuperModule` as well as other nested [super module](#glossary-and-definitions)s.
+
+Example:
+
+```ruby
+module V1::SummarizedActiveModel
+  include SuperModule
+
+  super_module_included do |klass|
+    if klass.name.split(/::/).last.start_with?('Fake')
+      klass.extend(FakeClassMethods1)
+    end
+  end
+
+  module FakeClassMethods1
+    def fake_summary
+      'This is a fake summary.'
+    end
+  end
+
+  class << self
+    def self.validates(attribute, options = {})
+      validations << [attribute, options]
+    end
+
+    def self.validations
+      @validations ||= []
+    end
+
+    def summary
+      validations.flatten.map(&:to_s).join("/")
+    end
+  end
+end
+
+module V1::ExtraSummarizedActiveModel
+  include SuperModule
+
+  include ::V1::SummarizedActiveModel
+
+  super_module_included do |klass|
+    if klass.name.split(/::/).last.start_with?('Fake')
+      klass.extend(FakeClassMethods2)
+    end
+  end
+
+  module FakeClassMethods2
+    def fake_extra
+      'This is fake extra.'
+    end
+  end
+
+  class << self
+    def extra
+      "This is extra."
+    end
+  end
+end
+
+class V1::SummarizedActiveRecord
+  include ::V1::SummarizedActiveModel
+end
+
+class V1::FakeSummarizedActiveRecord
+  include ::V1::SummarizedActiveModel
+end
+
+class V1::ExtraSummarizedActiveRecord
+  include ::V1::ExtraSummarizedActiveModel
+end
+
+class V1::FakeExtraSummarizedActiveRecord
+  include ::V1::ExtraSummarizedActiveModel
+end
+
+V1::SummarizedActiveRecord.validates 'foo', {:presence => true}
+V1::SummarizedActiveRecord.validates 'bar', {:presence => true}
+puts V1::SummarizedActiveRecord.summary
+# prints 'foo/{:presence=>true}/bar/{:presence=>true}'
+
+V1::FakeSummarizedActiveRecord.validates 'foo', {:presence => true}
+V1::FakeSummarizedActiveRecord.validates 'bar', {:presence => true}
+puts V1::FakeSummarizedActiveRecord.summary
+# prints 'foo/{:presence=>true}/bar/{:presence=>true}'
+puts V1::FakeSummarizedActiveRecord.fake_summary
+# prints 'This is a fake summary.'
+
+V1::ExtraSummarizedActiveRecord.validates 'foo', {:presence => true}
+V1::ExtraSummarizedActiveRecord.validates 'bar', {:presence => true}
+puts V1::ExtraSummarizedActiveRecord.summary
+# prints 'foo/{:presence=>true}/bar/{:presence=>true}'
+puts V1::ExtraSummarizedActiveRecord.extra
+# prints 'This is extra.'
+
+V1::FakeExtraSummarizedActiveRecord.validates 'foo', {:presence => true}
+V1::FakeExtraSummarizedActiveRecord.validates 'bar', {:presence => true}
+puts V1::FakeExtraSummarizedActiveRecord.summary
+# prints 'foo/{:presence=>true}/bar/{:presence=>true}'
+puts V1::FakeExtraSummarizedActiveRecord.fake_summary
+# prints 'This is a fake summary.'
+puts V1::FakeExtraSummarizedActiveRecord.extra
+# prints 'This is extra.'
+puts V1::FakeExtraSummarizedActiveRecord.fake_extra
+# prints 'This is fake extra.'
+```
+
 ## Limitations
 
 1) [SuperModule](https://rubygems.org/gems/super_module) by definition has been designed to be used only in the initial code declaration of a module, not later mixing or re-opening of a module.
-
-2) Given [SuperModule](https://rubygems.org/gems/super_module)'s implementation relies on `self.included(base)`, including modules must not hook into it, nor include any other (non-supermodule) modules that hook into it.
-
-In very rare occasions when an including module needs to redefine <code>self.included(base)</code> for meta-programming purposes, you may do so at your own peril by first invoking <code>self.included_super_module(base)</code> like in this example:
-```ruby
-module AdminIdentifiable
-    include SuperModule
-    include UserIdentifiable
-
-    class << self
-        def included(base)
-            included_super_module(base)
-            # do some extra rare meta-programming work
-            # like conditional inclusion of other modules
-            # or conditional definition of methods
-        end
-    end
-end
-```
-This does not work for all cases (like multiple levels of super module nesting), and is not recommended, likely causing problems.
-
-Avoid hooking into `self.included(base)`. You shouldn't need to anyways given `SuperModule` handles proper inclusion for you.
 
 ## Change Log
 
@@ -300,8 +391,7 @@ The library is quite new and can use all the feedback and help it can get. So, p
 
 ## TODO
 
-- Fix issue where class methods cannot get called from super_module directly (when used with "CONSTANT = super_module do" approach)
-- Fix issue where a super module (declared with super_module) can get included in one class only where class methods work, but the next class that includes the super module does not have class methods work
+None
 
 ## Copyright
 

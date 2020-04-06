@@ -27,10 +27,9 @@ module SuperModule
           :dbg_puts, #debugger library friendly exclusion
           :define,
           :included,
-          :included_super_module,
+          :super_module_included,
           :included_super_modules,
           :singleton_method_added,
-          :super_module_body
         ]
       end
 
@@ -70,11 +69,14 @@ module SuperModule
       end
 
       def __build_singleton_method_body_source(method_name)
-        method_body = self.method(method_name).source
-        method_args = __singleton_method_args(method_name, method_body)
+        the_method = self.method(method_name)
+        method_body = the_method.source
+        method_original_name = the_method.original_name
+        aliased = method_original_name != method_name
+        method_args = __singleton_method_args(method_original_name, method_body)
         method_body = "def #{method_name}\n#{method_body}\nend" if method_args.nil?
         class_self_method_def_enclosure = "class << self\n#{__singleton_method_access_level(method_name)}\ndef #{method_name}(#{method_args})\n#{__singleton_method_call_recorder(method_name, method_args)}\n"
-        method_body.sub(__singleton_method_definition_regex(method_name), class_self_method_def_enclosure) + "\nend\n"
+        method_body.sub(__singleton_method_definition_regex(method_original_name), class_self_method_def_enclosure) + "\nend\n"
       end
 
       def __singleton_method_body(method_name)
@@ -90,6 +92,9 @@ module SuperModule
       end
 
       def singleton_method_added(method_name)
+        if method_name.to_s == 'included' && !method(method_name).source_location.first.include?('super_module/v1')
+          raise 'Do not implement "self.included(base)" hook for a super module! Use "super_module_included {|base| ... }" instead.'
+        end
         unless __super_module_singleton_methods_excluded_from_base_definition.include?(method_name)
           method_body = __singleton_method_body(method_name)
           __super_module_singleton_methods << [method_name, method_body]
@@ -98,7 +103,7 @@ module SuperModule
       end
 
       def self.extended(base)
-        base.extend(SuperModule::ModuleBodyMethodCallRecorder) unless base.respond_to?(:__record_method_call)
+        base.extend(SuperModule::V1::ModuleBodyMethodCallRecorder) unless base.is_a?(SuperModule::V1::ModuleBodyMethodCallRecorder)
         base.singleton_method_added(:__method_signature)
         base.singleton_method_added(:__record_method_call)
       end

@@ -4,7 +4,7 @@ module SuperModule
       def __super_module_singleton_methods_excluded_from_call_recording
         @__super_module_singleton_methods_excluded_from_call_recording ||= [
           :__record_method_call,
-          :__method_signature
+          :__method_signature,
         ]
       end
 
@@ -16,7 +16,6 @@ module SuperModule
         "#{method_name}(#{args.to_a.map(&:to_s).join(",")})"
       end
 
-      #TODO handle case of a method call being passed a block (e.g. validates do custom validator end )
       def __record_method_call(method_name, *args, &block)
         return if self.is_a?(Class)
         __module_body_method_calls << [method_name, args, block]

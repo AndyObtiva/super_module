@@ -19,28 +19,53 @@ end
 module V1::SummarizedActiveModel
   include SuperModule
 
-  def self.included(klass)
-    included_super_module(klass)
+  super_module_included do |klass|
     if klass.name.split(/::/).last.start_with?('Fake')
-      klass.extend(FakeClassMethods)
+      klass.extend(FakeClassMethods1)
     end
   end
-  
-  def self.validates(attribute, options)
-    super # test that singleton class inheritance works
-  end
 
-  def self.validations
-    super # test that singleton class inheritance works
-  end
-
-  def self.summary
-    validations.flatten.map(&:to_s).join("/")
-  end
-
-  module FakeClassMethods
+  module FakeClassMethods1
     def fake_summary
       'This is a fake summary.'
+    end
+  end
+
+  class << self
+    def validates(attribute, options)
+      super # test that singleton class inheritance works
+    end
+
+    def validations
+      super # test that singleton class inheritance works
+    end
+
+    def summary
+      validations.flatten.map(&:to_s).join("/")
+    end
+  end
+end
+
+module V1::ExtraSummarizedActiveModel
+  include SuperModule
+
+  include ::V1::SummarizedActiveModel
+
+  super_module_included do |klass|
+    if klass.name.split(/::/).last.start_with?('Fake')
+      klass.extend(FakeClassMethods2)
+    end
+  end
+
+  module FakeClassMethods2
+    def fake_extra
+      'This is fake extra.'
+    end
+  end
+
+  class << self
+    def extra
+      "This is extra."
     end
   end
 end
@@ -53,6 +78,14 @@ class V1::FakeSummarizedActiveRecord < V1::FakeActiveRecord
   include ::V1::SummarizedActiveModel
 end
 
+class V1::ExtraSummarizedActiveRecord < V1::FakeActiveRecord
+  include ::V1::ExtraSummarizedActiveModel
+end
+
+class V1::FakeExtraSummarizedActiveRecord < V1::FakeActiveRecord
+  include ::V1::ExtraSummarizedActiveModel
+end
+
 describe SuperModule do
   context V1 do
     context "standalone module usage" do
@@ -61,6 +94,16 @@ describe SuperModule do
       it 'allows invoking class methods' do
         subject.validates 'foo', {:presence => true}
         expect(subject.validations).to include(['foo', {:presence => true}])
+      end
+
+      it 'raises error if super module implements self.included(base)' do
+        expect do
+          module SomeSuperModule
+            include SuperModule
+            def self.included(base)
+            end
+          end
+        end.to raise_error('Do not implement "self.included(base)" hook for a super module! Use "super_module_included {|base| ... }" instead.')
       end
     end
 
@@ -251,6 +294,22 @@ describe SuperModule do
         V1::FakeSummarizedActiveRecord.validates 'bar', {:presence => true}
         expect(V1::FakeSummarizedActiveRecord.summary).to eq('foo/{:presence=>true}/bar/{:presence=>true}')
         expect(V1::FakeSummarizedActiveRecord.fake_summary).to eq('This is a fake summary.')
+      end
+      it 'returns extra' do
+        V1::ExtraSummarizedActiveRecord.validates 'foo', {:presence => true}
+        V1::ExtraSummarizedActiveRecord.validates 'bar', {:presence => true}
+        expect(V1::ExtraSummarizedActiveRecord.summary).to eq('foo/{:presence=>true}/bar/{:presence=>true}')
+        expect{V1::ExtraSummarizedActiveRecord.fake_summary}.to raise_error
+        expect(V1::ExtraSummarizedActiveRecord.extra).to eq('This is extra.')
+        expect{V1::ExtraSummarizedActiveRecord.fake_extra}.to raise_error
+      end
+      it 'returns fake extra' do
+        V1::FakeExtraSummarizedActiveRecord.validates 'foo', {:presence => true}
+        V1::FakeExtraSummarizedActiveRecord.validates 'bar', {:presence => true}
+        expect(V1::FakeExtraSummarizedActiveRecord.summary).to eq('foo/{:presence=>true}/bar/{:presence=>true}')
+        expect(V1::FakeExtraSummarizedActiveRecord.fake_summary).to eq('This is a fake summary.')
+        expect(V1::FakeExtraSummarizedActiveRecord.extra).to eq('This is extra.')
+        expect(V1::FakeExtraSummarizedActiveRecord.fake_extra).to eq('This is fake extra.')
       end
     end
   end

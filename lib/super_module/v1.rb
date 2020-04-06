@@ -5,6 +5,7 @@ module SuperModule
   module V1
     class << self
       def included(original_base)
+        # TODO maybe avoid class_eval by extending/including instead
         original_base.class_eval do
           extend SuperModule::V1::ModuleBodyMethodCallRecorder
           extend SuperModule::V1::SingletonMethodDefinitionStore
@@ -27,8 +28,21 @@ module SuperModule
             def included(base)
               __define_super_module_singleton_methods(base)
               __invoke_module_body_method_calls(base)
+              super_module_included.each {|block| block.call(base)}
+              if base.ancestors.include?(SuperModule) && !base.is_a?(Class)
+                super_module_included.reverse.each do |block|
+                  base.super_module_included.unshift(block)
+                end
+              end
             end
-            alias included_super_module included
+
+            def super_module_included(&block)
+              if block_given?
+                super_module_included << block
+              else
+                @super_module_included_blocks ||= []
+              end
+            end
           end
         end
       end

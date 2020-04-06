@@ -1,5 +1,10 @@
 # Change Log
 
+## 1.4.0
+
+- Support aliased methods
+- Support safely calling self.included(base) in super module via super_module_included {|base| ... }
+
 ## 1.3.1
 
 - Fixed issue with super module containing class methods with default arguments
