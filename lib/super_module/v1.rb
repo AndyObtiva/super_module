@@ -28,7 +28,15 @@ module SuperModule
             def included(base)
               __define_super_module_singleton_methods(base)
               __invoke_module_body_method_calls(base)
-              super_module_included.each {|block| block.call(base)}
+              super_module_included.each do |block|
+                self.__inside_super_module_included = true
+                base.__inside_super_module_included = true       
+                block.binding.receiver.__inside_super_module_included = true       
+                block.call(base)
+                block.binding.receiver.__inside_super_module_included = false
+                base.__inside_super_module_included = false
+                self.__inside_super_module_included = false
+              end
               if base.ancestors.include?(SuperModule) && !base.is_a?(Class)
                 super_module_included.reverse.each do |block|
                   base.super_module_included.unshift(block)

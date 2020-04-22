@@ -54,11 +54,12 @@ module SuperModule
       end
 
       def __singleton_method_definition_regex(method_name)
+        method_name = Regexp.escape(method_name.to_s)
         /(public|protected|private)?(send)?[ \t(:"']*def(ine_method)?[ \t,:"']+(self\.)?#{method_name}\)?[ \tdo{(|]*([^\n)|;]*)?[ \t)|;]*/m
       end
 
       def __singleton_method_args(method_name, method_body)
-        method_arg_match = method_body.match(__singleton_method_definition_regex(method_name)).to_a[5]
+        method_body.match(__singleton_method_definition_regex(method_name)).to_a[5]
       end
 
       def __singleton_method_access_level(method_name)
@@ -106,6 +107,8 @@ module SuperModule
         base.extend(SuperModule::V1::ModuleBodyMethodCallRecorder) unless base.is_a?(SuperModule::V1::ModuleBodyMethodCallRecorder)
         base.singleton_method_added(:__method_signature)
         base.singleton_method_added(:__record_method_call)
+        base.singleton_method_added(:__inside_super_module_included?)
+        base.singleton_method_added(:__inside_super_module_included=)
       end
     end
   end

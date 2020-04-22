@@ -104,7 +104,7 @@ In other words, [SuperModule](https://rubygems.org/gems/super_module) furthers R
 
 <b>Using [Bundler](http://bundler.io/)</b>
 
-Add the following to Gemfile: <pre>gem 'super_module', '1.4.0'</pre>
+Add the following to Gemfile: <pre>gem 'super_module', '1.4.1'</pre>
 
 And run the following command: <pre>bundle</pre>
 

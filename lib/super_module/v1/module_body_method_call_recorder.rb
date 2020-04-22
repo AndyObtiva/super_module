@@ -5,6 +5,8 @@ module SuperModule
         @__super_module_singleton_methods_excluded_from_call_recording ||= [
           :__record_method_call,
           :__method_signature,
+          :__inside_super_module_included?,
+          :__inside_super_module_included=,
         ]
       end
 
@@ -17,8 +19,16 @@ module SuperModule
       end
 
       def __record_method_call(method_name, *args, &block)
-        return if self.is_a?(Class)
+        return if self.is_a?(Class) || __inside_super_module_included?
         __module_body_method_calls << [method_name, args, block]
+      end
+
+      def __inside_super_module_included?
+        @__inside_super_module_included
+      end
+ 
+      def __inside_super_module_included=(value)
+        @__inside_super_module_included = !!value
       end
 
       def __all_module_body_method_calls_in_definition_order

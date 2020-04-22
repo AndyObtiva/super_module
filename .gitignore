@@ -51,3 +51,4 @@ pkg
 .idea
 .idea/*
 *Gemfile.lock
+.gladiator

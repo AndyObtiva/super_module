@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.4.1
+
+- Pauses singleton method recording inside a super_module_included block to avoid replaying on submodules
+
 ## 1.4.0
 
 - Support aliased methods

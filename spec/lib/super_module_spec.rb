@@ -19,12 +19,6 @@ end
 module V1::SummarizedActiveModel
   include SuperModule
 
-  super_module_included do |klass|
-    if klass.name.split(/::/).last.start_with?('Fake')
-      klass.extend(FakeClassMethods1)
-    end
-  end
-
   module FakeClassMethods1
     def fake_summary
       'This is a fake summary.'
@@ -43,7 +37,19 @@ module V1::SummarizedActiveModel
     def summary
       validations.flatten.map(&:to_s).join("/")
     end
+
+    def only_call_in_super_module_included
+      raise 'Error' unless self == ::V1::SummarizedActiveModel
+    end
   end
+
+  super_module_included do |klass|
+    if klass.name.split(/::/).last.start_with?('Fake')
+      klass.extend(FakeClassMethods1)
+    end
+    only_call_in_super_module_included # should not get recorded for submodules/subclasses
+  end
+
 end
 
 module V1::ExtraSummarizedActiveModel
