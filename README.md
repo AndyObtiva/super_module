@@ -4,6 +4,8 @@
 [![Coverage Status](https://coveralls.io/repos/AndyObtiva/super_module/badge.svg?branch=master)](https://coveralls.io/r/AndyObtiva/super_module?branch=master)
 [![Code Climate](https://codeclimate.com/github/AndyObtiva/super_module.svg)](https://codeclimate.com/github/AndyObtiva/super_module)
 
+SuperModule enables continuing to use Ruby's basic module support (with mixin inheritance) even when wanting to inherit singleton-class-methods and invocations.
+
 Calling [Ruby](https://www.ruby-lang.org/en/)'s [`Module#include`](http://ruby-doc.org/core-2.2.1/Module.html#method-i-include) to mix in a module does not bring in class methods by default. This can come as quite the surprise when attempting to include class methods via a module.
 
 Ruby offers one workaround in the form of implementing the hook method [`Module.included(base)`](http://ruby-doc.org/core-2.2.1/Module.html#method-i-included) [following a certain boilerplate code idiom](http://www.railstips.org/blog/archives/2009/05/15/include-vs-extend-in-ruby/). Unfortunately, it hinders code maintainability and productivity with extra unnecessary complexity, especially in production-environment projects employing many [mixins](http://en.wikipedia.org/wiki/Mixin) (e.g. modeling business domain models with composable object [traits](http://en.wikipedia.org/wiki/Trait_(computer_programming))).
