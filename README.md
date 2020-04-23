@@ -1,8 +1,12 @@
-# <img src="https://raw.githubusercontent.com/AndyObtiva/super_module/master/SuperModule.jpg" alt="SuperModule" align="left" height="50" /> &nbsp; SuperModule 1.4.0
+# <img src="https://raw.githubusercontent.com/AndyObtiva/super_module/master/SuperModule.jpg" alt="SuperModule" align="left" height="50" /> &nbsp; SuperModule 1.4.1
 [![Gem Version](https://badge.fury.io/rb/super_module.svg)](http://badge.fury.io/rb/super_module)
 [![Build Status](https://api.travis-ci.org/AndyObtiva/super_module.svg?branch=master)](https://travis-ci.org/AndyObtiva/super_module)
 [![Coverage Status](https://coveralls.io/repos/AndyObtiva/super_module/badge.svg?branch=master)](https://coveralls.io/r/AndyObtiva/super_module?branch=master)
 [![Code Climate](https://codeclimate.com/github/AndyObtiva/super_module.svg)](https://codeclimate.com/github/AndyObtiva/super_module)
+
+(Note: despite the advanced version number, the idea of super_module is highly experimental and relies heavily on meta-programming, so unless you really need it, always prefer using pure Ruby modules when sufficient)
+
+[SuperModule](https://rubygems.org/gems/super_module) enables developers to continue to use Ruby modules as first-class citizens with mixin inheritance even when wanting to inherit singleton-class methods and invocations.
 
 Calling [Ruby](https://www.ruby-lang.org/en/)'s [`Module#include`](http://ruby-doc.org/core-2.2.1/Module.html#method-i-include) to mix in a module does not bring in class methods by default. This can come as quite the surprise when attempting to include class methods via a module.
 
@@ -12,12 +16,14 @@ Another workaround is [`ActiveSupport::Concern`](http://api.rubyonrails.org/clas
 
 But do not fear, [SuperModule](https://rubygems.org/gems/super_module) comes to the rescue! By declaring your module as a SuperModule, it will simply behave as one would expect and automatically include class methods along with instance methods, without any further work needed.
 
-Used in my other project: [Glimmer](https://github.com/AndyObtiva/Glimmer) (Ruby Desktop GUI Library)
+Used in my other project: [Glimmer DSL for SWT](https://github.com/AndyObtiva/glimmer-dsl-swt) (JRuby Desktop Development GUI Framework)
+
+Works in both [Ruby](https://www.ruby-lang.org) and [JRuby](https://www.jruby.org).
 
 ## Introductory Comparison
 
 To introduce [SuperModule](https://rubygems.org/gems/super_module), here is a comparison of three different approaches for writing a
-<code>UserIdentifiable</code> module, which includes ActiveModel::Model module as an in-memory alternative to ActiveRecord::Base superclass (Side-note: ActiveModel::Model is not needed when extending ActiveRecord::Base to connect to database.)
+`UserIdentifiable` module, which includes ActiveModel::Model module as an in-memory alternative to `ActiveRecord::Base` superclass.
 
 #### 1) [self.included(base)](http://ruby-doc.org/core-2.2.1/Module.html#method-i-included)
 
@@ -71,7 +77,7 @@ module UserIdentifiable
 end
 ```
 
-A step forward that addresses the boiler-plate repetitive code concern, but is otherwise really just lipstick on a pig. To explain more, developer problem solving and creativity flow is still disrupted by having to think about the lower-level mechanism of running code on inclusion (using `included`) and structuring class methods in an extra sub-module (`ClassMethods`) instead of simply declaring class methods like they normally would in Ruby and staying focused on the task at hand.
+A step forward that addresses the boiler-plate repetitive code concern, but is otherwise no more than putting a band-aid on the problem. To explain more, developer problem solving and creativity flow is still disrupted by having to think about the lower-level mechanism of running code on inclusion (using `included`) and structuring class methods in an extra sub-module (`ClassMethods`) instead of simply declaring class methods like they normally would in Ruby and staying focused on the task at hand.
 
 #### 3) [SuperModule](https://github.com/AndyObtiva/super_module)
 
@@ -97,6 +103,8 @@ By including `SuperModule` (following Ruby's basic convention of relying on a mo
 As a result, [SuperModule](https://rubygems.org/gems/super_module) collapses the difference between extending a super class and including a [super module](#glossary-and-definitions), thus encouraging developers to write simpler code while making better Object-Oriented Design decisions.
 
 In other words, [SuperModule](https://rubygems.org/gems/super_module) furthers Ruby's goal of making programmers happy.
+
+P.S. this library intentionally avoids bad techniques like "eval" of entire module body since they do not maintain Module mixin inheritance support. SuperModule supports full Ruby module mixin inheritance as it does not change it, yet only adds automation for singleton-class method inheritance on top of it (via surgical class_eval instead of full eval). SuperModule in fact encourages developers to continue to rely on basic Ruby code like `include SuperModule`.
 
 ## Instructions
 
@@ -371,7 +379,7 @@ puts V1::FakeExtraSummarizedActiveRecord.fake_extra
 
 ## Limitations
 
-1) [SuperModule](https://rubygems.org/gems/super_module) by definition has been designed to be used only in the initial code declaration of a module, not later mixing or re-opening of a module.
+[SuperModule](https://rubygems.org/gems/super_module) by definition has been designed to be used only in the initial code declaration of a module, not later mixing or re-opening of a module.
 
 ## Change Log
 
