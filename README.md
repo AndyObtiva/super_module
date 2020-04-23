@@ -371,7 +371,7 @@ puts V1::FakeExtraSummarizedActiveRecord.fake_extra
 
 ## Limitations
 
-1) [SuperModule](https://rubygems.org/gems/super_module) by definition has been designed to be used only in the initial code declaration of a module, not later mixing or re-opening of a module.
+[SuperModule](https://rubygems.org/gems/super_module) by definition has been designed to be used only in the initial code declaration of a module, not later mixing or re-opening of a module.
 
 ## Change Log
 
