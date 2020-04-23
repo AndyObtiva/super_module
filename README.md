@@ -100,6 +100,8 @@ As a result, [SuperModule](https://rubygems.org/gems/super_module) collapses the
 
 In other words, [SuperModule](https://rubygems.org/gems/super_module) furthers Ruby's goal of making programmers happy.
 
+P.S. this library intentionally avoids bad techniques like "eval" since they do not maintain Module mixin inheritance support. SuperModule supports full Ruby module mixin inheritance as it does not change it, yet only adds automation for singleton-class method inheritance on top of it. SuperModule in fact encourages developers to continue to rely on basic Ruby code like `include SuperModule`.
+
 ## Instructions
 
 #### 1) Install and require gem
