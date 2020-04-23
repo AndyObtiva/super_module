@@ -71,7 +71,7 @@ module UserIdentifiable
 end
 ```
 
-A step forward that addresses the boiler-plate repetitive code concern, but is otherwise really just lipstick on a pig. To explain more, developer problem solving and creativity flow is still disrupted by having to think about the lower-level mechanism of running code on inclusion (using `included`) and structuring class methods in an extra sub-module (`ClassMethods`) instead of simply declaring class methods like they normally would in Ruby and staying focused on the task at hand.
+A step forward that addresses the boiler-plate repetitive code concern, but is otherwise no more than putting a band-aid on the problem. To explain more, developer problem solving and creativity flow is still disrupted by having to think about the lower-level mechanism of running code on inclusion (using `included`) and structuring class methods in an extra sub-module (`ClassMethods`) instead of simply declaring class methods like they normally would in Ruby and staying focused on the task at hand.
 
 #### 3) [SuperModule](https://github.com/AndyObtiva/super_module)
 
