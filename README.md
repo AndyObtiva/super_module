@@ -4,7 +4,7 @@
 [![Coverage Status](https://coveralls.io/repos/AndyObtiva/super_module/badge.svg?branch=master)](https://coveralls.io/r/AndyObtiva/super_module?branch=master)
 [![Code Climate](https://codeclimate.com/github/AndyObtiva/super_module.svg)](https://codeclimate.com/github/AndyObtiva/super_module)
 
-SuperModule enables developers to continue to use Ruby module support the basic way (with mixin inheritance) even when wanting to inherit singleton-class methods and invocations.
+[SuperModule](https://rubygems.org/gems/super_module) enables developers to continue to use Ruby modules as first-class citizens with mixin inheritance even when wanting to inherit singleton-class methods and invocations.
 
 Calling [Ruby](https://www.ruby-lang.org/en/)'s [`Module#include`](http://ruby-doc.org/core-2.2.1/Module.html#method-i-include) to mix in a module does not bring in class methods by default. This can come as quite the surprise when attempting to include class methods via a module.
 
