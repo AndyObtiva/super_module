@@ -19,7 +19,7 @@ Used in my other project: [Glimmer](https://github.com/AndyObtiva/Glimmer) (Ruby
 ## Introductory Comparison
 
 To introduce [SuperModule](https://rubygems.org/gems/super_module), here is a comparison of three different approaches for writing a
-<code>UserIdentifiable</code> module, which includes ActiveModel::Model module as an in-memory alternative to ActiveRecord::Base superclass (Side-note: ActiveModel::Model is not needed when extending ActiveRecord::Base to connect to database.)
+`UserIdentifiable` module, which includes ActiveModel::Model module as an in-memory alternative to `ActiveRecord::Base` superclass.
 
 #### 1) [self.included(base)](http://ruby-doc.org/core-2.2.1/Module.html#method-i-included)
 
