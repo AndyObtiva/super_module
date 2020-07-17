@@ -16,6 +16,8 @@ But do not fear, [SuperModule](https://rubygems.org/gems/super_module) comes to 
 
 Used in my other project: [Glimmer](https://github.com/AndyObtiva/Glimmer) (Ruby Desktop GUI Library)
 
+Works in both [Ruby](https://www.ruby-lang.org) and [JRuby](https://www.jruby.org).
+
 ## Introductory Comparison
 
 To introduce [SuperModule](https://rubygems.org/gems/super_module), here is a comparison of three different approaches for writing a
