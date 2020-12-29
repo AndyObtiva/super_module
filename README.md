@@ -16,7 +16,7 @@ Another workaround is [`ActiveSupport::Concern`](http://api.rubyonrails.org/clas
 
 But do not fear, [SuperModule](https://rubygems.org/gems/super_module) comes to the rescue! By declaring your module as a SuperModule, it will simply behave as one would expect and automatically include class methods along with instance methods, without any further work needed.
 
-Used in my other project: [Glimmer](https://github.com/AndyObtiva/Glimmer) (Ruby Desktop GUI Library)
+Used in my other project: [Glimmer DSL for SWT](https://github.com/AndyObtiva/glimmer-dsl-swt) (JRuby Desktop Development GUI Framework)
 
 Works in both [Ruby](https://www.ruby-lang.org) and [JRuby](https://www.jruby.org).
 
