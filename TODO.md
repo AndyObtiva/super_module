@@ -1,5 +1,6 @@
 # TODO
 
+- Make replay of class method invocations optional (allow for a basic use case of simply including a module with class methods)
 - Replay class level attributes on classes
 - Fix issue with class methods including a method matching name with instance methods
 - Fix issue with class method alias as per details below
