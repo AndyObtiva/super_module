@@ -1,7 +1,7 @@
 # SuperModule allows defining class methods and method invocations the same way a super class does without using def included(base).
 #
 # Author::    Andy Maleh
-# Copyright:: Copyright (c) 2014-2015 Andy Maleh
+# Copyright:: Copyright (c) 2014-2024 Andy Maleh
 # License::   MIT License
 
 # This module allows defining class methods and method invocations the same way a super class does without using def included(base).

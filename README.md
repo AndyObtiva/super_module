@@ -1,4 +1,4 @@
-# <img src="https://raw.githubusercontent.com/AndyObtiva/super_module/master/SuperModule.jpg" alt="SuperModule" align="left" height="50" /> &nbsp; SuperModule 1.4.1
+# <img src="https://raw.githubusercontent.com/AndyObtiva/super_module/master/SuperModule.jpg" alt="SuperModule" align="left" height="50" /> &nbsp; SuperModule 1.4.2
 [![Gem Version](https://badge.fury.io/rb/super_module.svg)](http://badge.fury.io/rb/super_module)
 [![Coverage Status](https://coveralls.io/repos/AndyObtiva/super_module/badge.svg?branch=master)](https://coveralls.io/r/AndyObtiva/super_module?branch=master)
 [![Code Climate](https://codeclimate.com/github/AndyObtiva/super_module.svg)](https://codeclimate.com/github/AndyObtiva/super_module)
@@ -111,7 +111,7 @@ P.S. this library intentionally avoids bad techniques like "eval" of entire modu
 
 <b>Using [Bundler](http://bundler.io/)</b>
 
-Add the following to Gemfile: <pre>gem 'super_module', '1.4.1'</pre>
+Add the following to Gemfile: <pre>gem 'super_module', '1.4.2'</pre>
 
 And run the following command: <pre>bundle</pre>
 
@@ -389,11 +389,10 @@ puts V1::FakeExtraSummarizedActiveRecord.fake_extra
 [SuperModule](https://rubygems.org/gems/super_module) is written in a very clean and maintainable test-first approach, so you are welcome to read through the code on GitHub for more in-depth details:
 https://github.com/AndyObtiva/super_module
 
-The library is quite new and can use all the feedback and help it can get. So, please do not hesitate to add comments if you have any, and please fork [the project on GitHub](https://github.com/AndyObtiva/super_module#fork-destination-box) in order to [make contributions via Pull Requests](https://github.com/AndyObtiva/super_module/pulls).
+The library is quite novel and can use all the feedback and help it can get. So, please do not hesitate to add comments if you have any, and please fork [the project on GitHub](https://github.com/AndyObtiva/super_module#fork-destination-box) in order to [make contributions via Pull Requests](https://github.com/AndyObtiva/super_module/pulls).
 
 ## Articles, Publications, and Blog Posts
  * 2015-04-05 - [Ruby Weekly](http://rubyweekly.com): [Issue 240](http://rubyweekly.com/issues/240)
- * 2015-03-27 - [AirPair](http://www.airpair.com) Article: [Step aside ActiveSupport::Concern. SuperModule is the new sheriff in town!](https://www.airpair.com/ruby/posts/step-aside-activesupportconcern-supermodule-is-the-new-sheriff-in-town)
  * 2014-03-27 - [Code Painter](http://andymaleh.blogspot.com) Blog Post: [Ruby SuperModule Comes To The Rescue!!](http://andymaleh.blogspot.ca/2014/03/ruby-supermodule-comes-to-rescue.html)
 
 ## TODO
@@ -402,5 +401,4 @@ None
 
 ## Copyright
 
-Copyright (c) 2014-2020 Andy Maleh. See LICENSE.txt for
-further details.
+Copyright (c) 2014-2024 Andy Maleh. See [LICENSE.txt](LICENSE.txt) for further details.

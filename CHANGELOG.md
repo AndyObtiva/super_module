@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.4.2
+
+- Relax method_source gem dependency to `">= 0.8.2", "< 2.0.0"`
+
 ## 1.4.1
 
 - Pauses singleton method recording inside a super_module_included block to avoid replaying on submodules

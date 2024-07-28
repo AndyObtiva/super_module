@@ -1,6 +1,6 @@
 source "http://rubygems.org"
 
-gem "method_source", ">= 0.8.2", "< 1.2.0"
+gem "method_source", ">= 0.8.2", "< 2.0.0"
 
 group :development do
   gem "jeweler", "~> 2.3.0"
@@ -11,7 +11,6 @@ group :development do
   # Ruby 1.9.3 requires some older gems
   gem "rake", "~> 10.4.2"
   gem "rack", "~> 1.6.5"
-  gem "nokogiri", "~> 1.6.8.1"
   gem "tins", "~> 1.6.0"
   gem "term-ansicolor", "~> 1.3.2"
 end

@@ -50,5 +50,7 @@ pkg
 
 .idea
 .idea/*
-*Gemfile.lock
+
+# Gladiator (Glimmer Editor)
 .gladiator
+.gladiator-scratchpad
