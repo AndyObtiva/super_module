@@ -3,7 +3,7 @@
 [![Coverage Status](https://coveralls.io/repos/AndyObtiva/super_module/badge.svg?branch=master)](https://coveralls.io/r/AndyObtiva/super_module?branch=master)
 [![Code Climate](https://codeclimate.com/github/AndyObtiva/super_module.svg)](https://codeclimate.com/github/AndyObtiva/super_module)
 
-(Note: despite the advanced version number, super_module includes features that involve heavy use of meta-programming, so unless you really need it, prefer using pure Ruby modules when sufficient)
+(Note: super_module includes features that involve heavy use of meta-programming, so unless you really need it, prefer using pure Ruby modules when sufficient)
 
 [SuperModule](https://rubygems.org/gems/super_module) provides a simpler and more intuitive solution than `ActiveRecord::Concern` that enables developers to continue to use Ruby modules as first-class citizens with mixin inheritance even when wanting to inherit singleton-class methods and invocations.
 
